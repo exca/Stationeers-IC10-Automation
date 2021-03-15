@@ -1,0 +1,74 @@
+#Machine IC
+alias Machine d0
+alias InSorter d1
+alias OutStacker d2
+alias MemBomState d3
+alias CurrMode r0
+alias LastMode r1
+alias ProducedTotal r2
+alias CurrHash r3
+alias tempvalue r13
+alias tempvalue2 r14
+alias tempindex r15
+s MemBomState Setting 3 #empty
+s InSorter Mode 2
+s InSorter On 1
+start:
+yield
+l CurrMode MemBomState Setting
+add tempindex CurrMode 1
+jr tempindex
+j off #0
+j load #1
+j prod #2
+j empty #3
+off: #0
+jal bypass_sorter
+load: #1
+beq LastMode CurrMode start
+s Machine On 1
+s Machine Open 0
+s OutStacker Mode 0
+s OutStacker Setting 50
+s OutStacker ClearMemory 1
+move LastMode 1
+j start
+prod: #2
+jal bypass_sorter
+breq LastMode CurrMode 3
+s Machine Activate 1
+move LastMode 2
+l ProducedTotal OutStacker ImportCount
+blt ProducedTotal 10 start
+s MemBomState Setting 3
+j start
+empty: #3
+jal bypass_sorter
+s Machine RecipeHash 0 #reset current recipe
+breq LastMode CurrMode 7
+s Machine On 0
+s OutStacker Mode 0
+yield
+s Machine On 1
+s Machine Open 1
+jr 4
+sleep 2 #wait 2 seconds
+l ProducedTotal OutStacker ImportCount
+brlez ProducedTotal 8
+s OutStacker Activate 1
+yield
+s OutStacker Activate 0
+s OutStacker ClearMemory 1
+sleep 2 #wait 2 seconds
+move LastMode 3
+j start
+s Machine On 0
+s Machine Open 0
+s MemBomState Setting 0
+move LastMode 0
+j start
+bypass_sorter:
+ls tempvalue InSorter 0 OccupantHash
+breqz tempvalue 2
+s InSorter Output 1 # reject ingot
+j ra

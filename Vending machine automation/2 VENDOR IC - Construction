@@ -1,0 +1,102 @@
+#VENDOR IC
+alias Vending d0
+alias InSorter d1
+alias MemItemMinQty d2
+alias MemOutRequest d3
+alias MemInRequest d4
+
+alias currIndexHash r0
+alias currIndexQty r1
+alias currIndexReq r2
+alias surveyIndex r3
+alias minQty r4
+alias currInReq r5
+alias stackSize r12
+alias tempvalue r13
+alias tempvalue2 r14
+alias tempindex r15
+
+define DefaultQty 10 #set minimum here
+
+push -466050668 #cable coil
+push 1025254665 #chute
+push -1826855889 # wall
+push -1448105779 # steel frame
+push 38555961 # steel sheet
+push 662053345 # plastic sheet
+push 1182412869 #floor grating
+push 1588896491 #glass sheet
+push -487378546	#iron sheet
+push 1108423476 #light
+push -1470820996 #cladding
+push -1619793705 #pipe
+push 452636699 # insulated pipe
+push -1766301997 # volume pump
+push 238631271 # passive vent
+push -1796655088 # pipe radiator
+push -1166461357 # liquid pipe
+push 1635000764	# CO2 filter
+
+move stackSize sp
+brdns InSorter 3
+s InSorter Mode 2
+s InSorter On 1
+start:
+yield
+move sp stackSize
+bdns InSorter continue #if sorter is defined
+ls tempvalue InSorter 0 OccupantHash #look input
+beqz tempvalue continue
+breqz sp 5 #return on last index
+pop tempindex #read hash
+brne tempvalue tempindex -2 #compare hash
+s InSorter Output 0 #accept input
+j continue
+s InSorter Output 1 #reject input
+continue:
+brgtz surveyIndex 2 #cycle between hashs
+move surveyIndex stackSize
+move sp surveyIndex
+sub surveyIndex surveyIndex 1
+pop currIndexHash #get hash
+move currIndexQty 0 #reset qty
+move tempindex 102 #max slot 101
+sub tempindex tempindex 1
+ls tempvalue Vending tempindex OccupantHash #read
+brne tempvalue currIndexHash 3 #if same hash
+ls tempvalue Vending tempindex Quantity #read qty
+add currIndexQty currIndexQty tempvalue #add qty
+brgt tempindex 2 -5 #min slot 2
+brdns MemItemMinQty 3 #use memory if available
+l minQty MemItemMinQty Setting
+jr 2
+move minQty DefaultQty
+slt currIndexReq currIndexQty minQty #if under min
+l tempvalue MemOutRequest Setting #if requested
+beq tempvalue 0 end #check if it is a new request
+beq tempvalue -1 end #check if it is a new request
+bne tempvalue currIndexHash end #check if requested
+breqz currIndexQty 4 #check if available
+s MemOutRequest Setting 0 #mark as delivered
+s Vending RequestHash currIndexHash #deliver
+j end
+add currIndexReq currIndexReq 1 #mark as needed
+s MemOutRequest Setting -1 #mark unavailable
+end:
+ls tempvalue Vending 0 OccupantHash #look input
+brne tempvalue currInReq 3 #if same as expected
+move currInReq 0 #reset current request
+s MemInRequest Setting 0 #mark as done
+breqz currIndexReq 4 #marked as needed
+brnez currInReq 3 #no current request
+move currInReq currIndexHash #set as current req
+s MemInRequest Setting currIndexHash #request it
+breqz currIndexReq 4 #not marked as needed
+brne currIndexHash currInReq 2 #when current hash
+sleep 1 #wait for answer
+breqz currInReq 5 #if current request defined
+l tempvalue MemInRequest Setting #check for answer
+brgt tempvalue 0 3 #answer in (0, -1 or -2)
+brlt tempvalue -2 2
+move currInReq 0 #undefine current request
+j start

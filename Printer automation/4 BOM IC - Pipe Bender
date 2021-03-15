@@ -1,0 +1,120 @@
+#BOM IC
+alias Machine d0
+alias InSorter d1
+alias MemProductHash d2
+alias MemIngotHash d3
+alias MemBomState d4
+alias CurrAction r0
+alias RequestedProduct r1
+alias stackSize r9 #bom is r2 to r8
+alias LastIngotHashReq r10
+alias tempvalue r13
+alias tempvalue2 r14
+alias tempindex r15
+push 0200000
+push 1025254665 #chute
+push 0100000
+push -1619793705 #pipe
+push 1000100
+push 452636699 # insulated pipe
+push 0200000
+push 1635000764	# CO2 filter
+push 0212000
+push -1766301997 # volume pump
+push 0200000
+push 238631271 # passive vent
+push 0020100
+push -1796655088 # pipe radiator
+push 0100000
+push -1166461357 # liquid pipe
+move stackSize sp
+move sp 102
+push -290196476 #Silicon
+push -1301215609 #Iron
+push 226410516 #Gold
+push -404336834 #Copper
+push -654790771 #Steel
+push 502280180 #Electrum
+push -82508479 #Solder
+start:
+yield
+l CurrAction MemBomState Setting
+move sp stackSize
+jal observe #0
+beqz CurrAction start
+yield
+move sp stackSize
+beq CurrAction 1 load #1
+move LastIngotHashReq 0
+j start
+observe: #0 - - -
+l RequestedProduct MemProductHash Setting
+brlt RequestedProduct -2 2 #value not in (0, -1, -2)
+ble RequestedProduct 0 ra
+brgtz sp 3 #compare to list
+move RequestedProduct 0
+j ra
+pop tempvalue #hash
+pop tempvalue2 #ingots
+brne tempvalue RequestedProduct -5
+brne CurrAction 2 6 #Already in prod
+l tempindex Machine RecipeHash #current hash
+brne tempindex RequestedProduct 3 #Same product
+s MemProductHash Setting 0 #confirm
+j ra
+s MemProductHash Setting -1 #unavailable
+bne CurrAction 0 ra #Already loaded recipe
+s Machine RecipeHash RequestedProduct #set hash
+move tempindex 2 #set ingots required
+move tempvalue 1000000
+move rr15 0 #relative tempindex
+brlt tempvalue2 tempvalue 4
+add rr15 rr15 25 #relative tempindex
+sub tempvalue2 tempvalue2 tempvalue
+jr -3
+div tempvalue tempvalue 10
+add tempindex tempindex 1
+brge tempvalue 1 -7
+s MemBomState Setting 1 #load ingots
+j ra
+load: #1 - - -
+ls tempvalue InSorter 0 OccupantHash
+beqz tempvalue check_vendor #next step
+brne tempvalue LastIngotHashReq 14 #reject ingot
+move tempindex 8 #first = r8
+add sp 101 tempindex #ingots hashs
+pop tempvalue2
+brne tempvalue2 tempvalue 4
+ls tempvalue InSorter 0 Quantity
+sub rr15 rr15 tempvalue #relative tempindex
+jr 4 # accept ingot
+brle tempindex 2 6 #last = r2 #reject ingot
+sub tempindex tempindex 1
+jr -8
+s InSorter Output 0 # accept ingot
+move LastIngotHashReq 0
+jr 2 # check_vendor
+s InSorter Output 1 # reject ingot
+check_vendor:
+yield
+beqz LastIngotHashReq check_req #no ingot req
+l tempvalue MemIngotHash Setting # check vendor
+bne tempvalue -1 start # waiting answer or ingot
+move RequestedProduct 0
+s MemProductHash Setting -2 #no ingots
+s MemBomState Setting 3 #empty
+j start
+check_req:
+move tempindex 8 #first = r8 #check ingots ready
+brlez rr15 7 #relative tempindex
+add sp 101 tempindex
+pop tempvalue2
+breq tempvalue2 LastIngotHashReq 3
+s MemIngotHash Setting tempvalue2
+move LastIngotHashReq tempvalue2
+j start
+brle tempindex 2 3 #last = r2
+sub tempindex tempindex 1
+jr -9
+s MemBomState Setting 2 #prod
+j start

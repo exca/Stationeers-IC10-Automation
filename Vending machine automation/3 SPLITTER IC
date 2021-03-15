@@ -1,0 +1,100 @@
+#Hash Request Splitter IC
+alias MemMasterHash d0
+alias MemOneHash d1
+alias MemTwoHash d2
+alias MemThreeHash d3
+alias MemFourHash d4
+alias MemFiveHash d5
+
+alias CurrChannel r0
+alias LastMasterHash r1
+alias LastOneHash r2
+alias LastTwoHash r3
+alias LastThreeHash r4
+alias LastFourHash r5
+alias LastFiveHash r6
+
+start:
+yield
+
+#check mem one
+brdns MemOneHash 6 #jump if not set
+l LastOneHash MemOneHash Setting
+breq LastOneHash 0 4
+breq LastOneHash -1 3
+breq LastOneHash -2 2
+j One
+
+#check mem two
+brdns MemTwoHash 6 #jump if not set
+l LastTwoHash MemTwoHash Setting
+breq LastTwoHash 0 4
+breq LastTwoHash -1 3
+breq LastTwoHash -2 2
+j Two
+
+#check mem Three
+brdns MemThreeHash 6 #jump if not set
+l LastThreeHash MemThreeHash Setting
+breq LastThreeHash 0 4
+breq LastThreeHash -1 3
+breq LastThreeHash -2 2
+j Three
+
+#check mem Four
+brdns MemFourHash 6 #jump if not set
+l LastFourHash MemFourHash Setting
+breq LastFourHash 0 4
+breq LastFourHash -1 3
+breq LastFourHash -2 2
+j Four
+
+#check mem Five
+brdns MemFiveHash 6 #jump if not set
+l LastFiveHash MemFiveHash Setting
+breq LastFiveHash 0 4
+breq LastFiveHash -1 3
+breq LastFiveHash -2 2
+j Five
+
+j start
+
+One:
+s MemMasterHash Setting LastOneHash
+yield
+l LastMasterHash MemMasterHash Setting
+breq LastMasterHash LastOneHash -2
+s MemOneHash Setting LastMasterHash
+j start
+
+Two:
+s MemMasterHash Setting LastTwoHash
+yield
+l LastMasterHash MemMasterHash Setting
+breq LastMasterHash LastTwoHash -2
+s MemTwoHash Setting LastMasterHash
+j start
+
+Three:
+s MemMasterHash Setting LastThreeHash
+yield
+l LastMasterHash MemMasterHash Setting
+breq LastMasterHash LastThreeHash -2
+s MemThreeHash Setting LastMasterHash
+j start
+
+Four:
+s MemMasterHash Setting LastFourHash
+yield
+l LastMasterHash MemMasterHash Setting
+breq LastMasterHash LastFourHash -2
+s MemFourHash Setting LastMasterHash
+j start
+
+Five:
+s MemMasterHash Setting LastFiveHash
+yield
+l LastMasterHash MemMasterHash Setting
+breq LastMasterHash LastFiveHash -2
+s MemFiveHash Setting LastMasterHash
+j start
