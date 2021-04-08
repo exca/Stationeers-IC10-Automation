@@ -92,10 +92,11 @@ brne tempvalue2 tempvalue 4
 ls tempvalue InSorter 0 Quantity
 sub rr15 rr15 tempvalue #relative tempindex
 jr 4 # accept ingot
-brle tempindex 2 6 #last = r2 #reject ingot
+brle tempindex 2 7 #last = r2 #reject ingot
 sub tempindex tempindex 1
 jr -8
 s InSorter Output 0 # accept ingot
+sleep 1 #wait to get inside the machine
 move LastIngotHashReq 0
 jr 2 # check_vendor
 s InSorter Output 1 # reject ingot
