@@ -84,7 +84,7 @@ j ra
 load: #1 - - -
 ls tempvalue InSorter 0 OccupantHash
 beqz tempvalue check_vendor #next step
-brne tempvalue LastIngotHashReq 14 #reject ingot
+brne tempvalue LastIngotHashReq 15 #reject ingot
 move tempindex 8 #first = r8
 add sp 101 tempindex #ingots hashs
 pop tempvalue2
