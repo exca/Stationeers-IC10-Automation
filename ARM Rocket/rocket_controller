@@ -1,0 +1,126 @@
+#ROCKET CONTROLLER IC
+alias arm_automation d0
+alias state_lcd d1 
+alias silo_lcd d2
+alias fuel_pump d3
+alias open_silo_lever d4
+alias button_go d5
+alias state r0
+alias curr_fuel r1
+alias min_fuel r2
+alias can_collect r3
+alias lever_open r4
+alias go_btn_activated r5
+alias rocket_mode r6
+alias ore_qty r7
+alias last_state r8
+alias tempvalue r13
+s fuel_pump Setting 100
+j state5 # Default is return
+main:
+yield
+move last_state state
+# Read values
+l rocket_mode arm_automation Mode
+l lever_open open_silo_lever Setting
+l go_btn_activated button_go Setting
+l curr_fuel arm_automation Fuel
+l can_collect arm_automation CollectableGoods
+l min_fuel arm_automation ReturnFuelCost
+add min_fuel min_fuel 500 # Aditional fuel
+lb ore_qty 906210602 Quantity Sum
+s silo_lcd Setting ore_qty
+s db Setting state # Current state
+s state_lcd Setting rocket_mode
+add tempvalue state 1 # Go to sub-routine
+jr tempvalue
+j state0
+j state1
+j state2
+j state3
+j state4
+j state5
+j state6
+j main
+
+state0: # 0 - Waiting fuel - - -
+move state 0
+s button_go Open 0
+s state_lcd Color 4 #red
+sb 1944485013 Color 4 #led red
+sb 1944485013 On 1
+sb 906210602 Open 0 # Close Silo and lever
+s open_silo_lever Open 0
+s fuel_pump On 1 # Activate fuel
+# state => 1 when fuel min pressure
+bge curr_fuel 1500 state1
+j main
+state1: # 1 - Ready to start - - -
+move state 1
+s button_go Open 1
+s state_lcd Color 3 #orange
+sb 1944485013 Color 2 #led green
+lb tempvalue -505333199 Pressure Maximum
+slt tempvalue tempvalue 10000 # Activate while < 10 MPa
+s fuel_pump On tempvalue
+# state => 2 when button pressed
+bnez go_btn_activated state2
+j main
+state2: # 2 - Launching - - -
+move state 2
+s button_go Open 0
+sb 1944485013 Color 3 #led orange
+s fuel_pump On 0
+s arm_automation Activate 1 # Set mode 1 (launching)
+# state => 3 when idle in space (mode 4)
+beq rocket_mode 4 state3
+j main
+state3: # 3 - Collecting ores - - -
+move state 3
+s arm_automation Activate 1 # Set mode 1 (4-idle doen't work)
+sb -2027419821 Activate can_collect #Start/Stop Mining
+s state_lcd Color 2 #green
+sb 1944485013 Color 0 #led blue
+sb 1944485013 On 1
+bne last_state state main #at leat one cycle here
+# state => 4 when no more goods to collect
+beqz can_collect state4
+# state => 5 when minimum fuel or button pressed
+blt curr_fuel min_fuel state5
+bnez go_btn_activated state5
+#bge ore_qty 100 state5
+j main
+state4: # 4 - Traveling - - -
+move state 4
+sb -2027419821 Activate 0 #Stop Mining
+breq last_state state 2 #don't move until stopped
+s arm_automation Activate 2 # Set mode 2 (travel)
+s state_lcd Color 3 #orange
+sb 1944485013 On 0
+bne last_state state main #at leat one cycle here
+# state => 3 when idle in space (mode 4)
+beq rocket_mode 4 state3
+# state => 5 when minimum fuel or button pressed
+blt curr_fuel min_fuel state5
+bnez go_btn_activated state5
+j main
+state5: # 5 - Travel back - - -
+move state 5
+sb 1944485013 Color 3 #led orange
+sb 1944485013 On 1
+s arm_automation Activate 5 # Set mode 5 (returning)
+# state => 6 when on pad (mode 6)
+beq rocket_mode 6 state6
+beq rocket_mode 0 state6
+j main
+state6: # 6 - Open Silo - - -
+breq state 6 6
+sb 1944485013 On 0
+sb 906210602 Open 1 # Open silo and lever
+s open_silo_lever Open 1
+yield
+s state_lcd Color 0 #blue
+move state 6
+# state => 0 when silo empty or lever is down
+beqz ore_qty state0
+j main
