@@ -7,3 +7,6 @@ All the machines read the requested hash, and the machine that can produce it st
 When all the ingots are available, the printer start a batch of 10 products (the quantity can be adjusted in the program).
 After producing, the stacker will export the produced items and then, the ingots will return to the Vending Machine.
 The products are sorted to go to the first Vending machine.
+
+# Combustion Centrifuge PID
+I am sharing this save in creative mode where I created a PID controller for the combustion centrifuge, to automatically command the centrifuge and get a good acceleration, limiting the amount of stress.
