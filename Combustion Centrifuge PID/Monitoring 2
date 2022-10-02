@@ -1,0 +1,25 @@
+#Monitoring IC 2
+alias centrifuge d0
+alias command d1
+
+alias mem5 d4
+alias mem6 d5
+
+alias lastRpm r5
+
+main:
+yield
+
+l r0 centrifuge Stress
+l r1 command Setting
+sub r0 r1 r0
+s mem5 Setting r0
+
+l r0 centrifuge Rpm
+move r1 r0
+sub r0 r0 lastRpm
+mul r0 r0 120 #RPM/tick * tick/min
+s mem6 Setting r0
+move lastRpm r1
+
+j main

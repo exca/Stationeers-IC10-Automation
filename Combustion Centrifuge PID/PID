@@ -1,0 +1,108 @@
+#PID IC
+
+alias Kp d0 #Memory
+alias Ki d1 #Memory
+alias Kd d2 #Memory
+
+alias FeedbackDevice d3
+alias SetPointDevice d4
+
+alias currVal r0
+alias setVal r1
+alias error r2
+alias lastError r3
+alias integral r4
+move integral 0
+alias derivate r5
+alias command r6
+
+alias kp_factor r7
+alias ki_factor r8
+alias kd_factor r9
+
+alias tor_step r10
+alias tor_max r11
+alias stopCommand r12
+define ReactionSign 1
+
+alias tempvalue r13
+
+move lastError 0
+
+main:
+yield
+
+#read data
+l currVal FeedbackDevice Stress
+l setVal SetPointDevice Setting
+
+l kp_factor Kp Setting
+l ki_factor Ki Setting
+l kd_factor Kd Setting
+
+#Stop command
+sgtz stopCommand setVal
+sub stopCommand 1 stopCommand
+
+#Calculate error
+sub error setVal currVal
+s db Setting error
+
+#Calculate Integral
+mul tempvalue error 0.5
+add integral integral tempvalue
+
+#Calculate Derivative
+sub derivate error lastError
+div derivate derivate 0.5
+move lastError error
+
+#Calculated Result Command
+mul command error kp_factor
+mul tempvalue integral ki_factor
+add command command tempvalue
+mul tempvalue derivate kd_factor
+add command command tempvalue
+mul command command ReactionSign
+
+#reset integral
+brnez ki_factor 2
+move integral 0
+
+#s db Setting command
+
+#Direct command
+add command setVal command
+
+#Limit throttle below 150 rpm
+l tempvalue FeedbackDevice Rpm
+brgt tempvalue 150 2
+#min command command 20 #Limit to 20%
+
+#Stop throttle when trying to stop
+brnez stopCommand 4
+s FeedbackDevice Throttle command
+s FeedbackDevice On 1
+jr 4
+s FeedbackDevice Throttle 0
+s FeedbackDevice On 0
+move integral 0
+
+#Limiter regulation
+brnez stopCommand 4
+sub command command 10
+s FeedbackDevice CombustionLimiter command
+jr 2
+s FeedbackDevice CombustionLimiter 0
+
+#Open when stopped
+l tempvalue FeedbackDevice Rpm
+seqz tempvalue tempvalue
+s FeedbackDevice Open tempvalue
+
+j main
+
+#Command = 30
+#Kp = 0.15
+#Ki = 0.05
+#Kd = 40

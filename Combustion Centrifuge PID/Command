@@ -1,0 +1,26 @@
+#Command IC
+alias centrifuge d0
+alias lever d1
+alias setpoint d2
+
+main:
+yield
+
+l r1 lever Open
+beqz r1 reset
+
+#Check that speed and stress is null
+l r0 centrifuge Rpm
+brgtz r0 3
+l r0 centrifuge Stress
+bgtz r0 reset
+
+#Send the set point to PID
+l r0 setpoint Setting
+s db Setting r0
+j main
+
+reset:
+#cannot start the PID
+s db Setting 0
+j main

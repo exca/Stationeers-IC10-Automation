@@ -1,0 +1,21 @@
+#Monitoring IC
+alias centrifuge d0
+alias mem1 d1
+alias mem2 d2
+alias mem3 d3
+alias mem4 d4
+alias mem5 d5
+
+main:
+yield
+
+l r0 centrifuge Stress
+s mem1 Setting r0
+l r0 centrifuge Throttle
+s mem2 Setting r0
+l r0 centrifuge CombustionLimiter
+s mem3 Setting r0
+l r0 centrifuge Rpm
+s mem4 Setting r0
+
+j main
