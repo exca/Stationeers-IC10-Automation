@@ -1,5 +1,5 @@
 # Stationeers-BASIC-IC10
-A BASIC compiler for Stationeers MIPS IC10 code, developped in C# in Unity.
+A BASIC compiler for Stationeers MIPS IC10 code, developped in C#, in Unity, by Exca (Fly Game Studio).
 
 This page introduces the BASIC-IC10 programming language designed for the IC10 chips in the game Stationeers.
 A BASIC language is well-suited for managing complex code and is particularly accessible to individuals who may not have prior programming experience due to its simple and user-friendly syntax.
@@ -397,7 +397,7 @@ ENDIF
 
 In this example, the first `IF...THEN...ENDIF` structure checks if the temperature is too low and turns on the wall heaters. The second `IF...THEN...ELSE...ENDIF` structure checks if the temperature is too high and switch on the coolers.
 
-Note that the second structure could be replaced by setting the deviced using an operation in one line:
+Note that the second structure could be replaced by setting the device using an operation in one line:
 ```basic
 Coolers.On = (Sensor.Temperature >= 30C)
 ```
@@ -477,9 +477,9 @@ Labels and `GOTO` can be helpful for controlling program flow in certain situati
 
 In the BASIC programming language, the `Yield` and `Wait` functions are used to control the timing and execution of code. Here's an explanation of each:
 
-1. **Yield:**
-   - In Stationeers, the `Yield` instruction pauses execution of the script until the next game tick (0.5s), this is important since other devices will not update until the next tick so using yield will improve the efficiency of your code.
-   - Example of using `Yield` in a loop:
+1. **yield():**
+   - In Stationeers, the Yield instruction pauses execution of the script until the next game tick (0.5s), this is important since other devices will not update until the next tick so using yield will improve the efficiency of your code.
+   - Example of using `Yield()` in a loop:
    
      ```basic
      WHILE condition THEN
@@ -490,18 +490,18 @@ In the BASIC programming language, the `Yield` and `Wait` functions are used to 
 
    - The compiler will try to place automatically a `Yield` in the main loop of your program to prevent it from consuming excessive resources. However, you can also manually insert `Yield` to control the pace of execution.
 
-2. **Wait:**
-   - The `Wait` function is used to introduce a longer waiting time compared to `Yield`. You can specify the waiting time in seconds as an argument to `Wait()`. This function is helpful when you need precise timing or longer pauses in your code.
-   - Example of using `Wait` to wait for 5 seconds:
+2. **wait(duration):**
+   - The `Wait()` function is used to introduce a longer waiting time compared to `Yield()`. You can specify the waiting time in seconds as an argument to `Wait()`. This function is helpful when you need precise timing or longer pauses in your code.
+   - Example of using `Wait()` to wait for 5 seconds:
    
      ```basic
      Wait(5)  # Wait for 5 seconds
      ```
 
-   - You can use `Wait` to introduce delays, for example, to simulate time passing in the game or to synchronize actions with specific time intervals.
+   - You can use `Wait` to introduce delays, for example, to let time passing in the game or to synchronize actions with specific time intervals.
    - `Wait` can be called using a variable or calulation, for example `WAIT(0.5 * myRatio)`.
 
-Both `Yield` and `Wait` functions are essential for managing the timing and responsiveness of your code, especially in scenarios where you want to avoid excessive resource usage or coordinate actions with the game's simulation time.
+Both `Yield()` and `Wait()` functions are essential for managing the timing and responsiveness of your code, especially in scenarios where you want to avoid excessive resource usage or coordinate actions with the game's simulation time.
 
 ## Calculation
 
@@ -587,8 +587,14 @@ ENDFUNCTION
 Once you've defined a custom function, you can call it elsewhere in your code by using the function name and passing arguments to it. For example:
 
 ```basic
-VAR sum = addNumbers(3, 5)  ' Calls the custom function and assigns the result to "sum"
+VAR sum = addNumbers(3, 5)  # Calls the custom function and assigns the result to "sum"
 ```
 
 Note that custom functions cannot be called in other custom functions (We have removed this possibility on purpose, as it require more stack operations while compiled).
 Custom functions must be used for more complex operations that needs to be repeated in code. If you don't need to pass parameters to a function, or don't need a return value, prioritize the use of labels  with `goto` instructions.
+
+# Contacts and suggestions
+
+We value your feedback and suggestions! If you have any questions, ideas, or simply want to connect with the community, we encourage you to join our Discord server. It's a great platform to interact with like-minded individuals, ask questions, share your experiences, and provide valuable feedback. Your input helps us improve and enhance the resources and tools we provide. We look forward to having you as part of our community.
+
+- Join us on Discord: https://discord.gg/2rnpHTWVyV
