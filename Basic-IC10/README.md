@@ -47,7 +47,8 @@ In some situations, users may opt to declare multiple values in an array when de
 
 6. **NAME**
    - *Explanation:* Associates a device with its name, using the hash or name of the device type.
-   - *Example:* `NAME MyDevice 12093129 "Sensor"`
+   - *Example:* `NAME MyDevice StructureGasSensor "Airlock Sensor"` (with the name of the device found in Stationpedia)
+   - *Example 2:* `NAME MyDevices -1252983604 "Airlock Sensor"` (with the Hash of the device found in Stationpedia)
 
 Declaring a device using NAME is a method to manage more than six devices within the constraints of an IC, which typically offers only six available pins, by associating specific devices with their names or types, thereby allowing for the effective management of a larger number of devices in the program.
 
@@ -98,6 +99,39 @@ You can use similar syntax for other slot types and properties on the device, de
 
 Slots in the BASIC programming language can be specified using either a variable or a constant, and there are predefined constants for slot types, including `Import` (slot 0), `Export` (slot 1), and `Content` (slot 2). Check the Stationpedia to get the exact slot number to use.
 
+### Read a reagent quantity
+
+In the BASIC programming language, you can read a reagent on a device using a specific syntax. To read a reagent, you need to specify the "Reagent" variable, followed by the reagent name or reagent hash within square brackets. Here's how to do it:
+
+```basic
+Device.Reagent[ReagentName].ReagentProperty
+```
+
+- `Device`: This represents the device on which you want to read the reagent.
+- `ReagentName`: You specify the name of the reagent you want to access within square brackets.
+- `ReagentProperty`: This is the specific property or data you want to retrieve from the reagent.
+
+Here's an example of how to read the `Contents` property of an "Iron" reagent on a device named `MyDevice`:
+
+```basic
+MyDevice.Reagent[Iron].Contents
+```
+
+In this example, `MyDevice` represents the device, `[Iron]` specifies the reagent name as "Iron," and `.Contents` retrieves the value of the Contents property for the Iron reagent.
+
+You can use similar syntax to read other reagent properties or access different reagents on devices as needed within your program.
+
+Here is a list of the `ReagentName` values that can be found in a printer: `Silicon`, `Iron`, `Gold`, `Copper`, `Silver`, `Lead`, `Steel`, `Electrum`, `Invar`, `Constantan`, `Solder`, `Astroloy`, `Hastelloy`, `Inconel`, `Waspaloy`, `Stellite`, `Nickel`.
+Using one of these names will automatically generate the Hash of the Ingot Item.
+
+The `ReagentName` can also be a variable (`VAR`) or a constant (`CONST`) value.
+
+There are 3 different `ReagentProperty` values that can be used:
+- `Contents` to return the quantity of the specified reagent inside the printer.
+- `Required` to return the missing quantity of the specified reagent to be able to print the selected recipe.
+- `Recipe` to return the total quantity of the specified reagent needed to print 1 unit of the selected recipe.
+
+If no `ReagentProperty` is specified, the default `Contents` will be considered.
 
 ### Specify batch reading mode
 
@@ -155,14 +189,112 @@ Temperatures:
 - **K (Kelvin):** No conversion required, it's in absolute temperature.
 - **C (Celsius):** Add 273.15 to convert to Kelvin.
 
+Percentage:
+- **% (Percentage):** Multiply by 0.01 to convert to the percentage representation.
+
 For example, to set a temperature of 25 degrees Celsius as a constant in Kelvin (which is the default unit in the game):
 
 ```basic
 CONST temperature = 25C
+CONST ratio = 10%
+CONST max_pressure = 59.99 MPa
 ```
 
-The language will automatically convert this value to Kelvin (298.15K) for internal calculations.
+The language will automatically convert the value `25C` to Kelvin (298.15K) for internal calculations.
 
+## Strings (Hash representation)
+
+When a string is delimited by double quotes (e.g., `"example"`), it is automatically converted into a hash of that string. This feature can be useful for storing and managing multiple hashes in an array.
+
+A Hash is a compiled value of a string and is used in Stationeers to represent a device on the data network, or an item inside a slot. For example, reading the variable `OccupantHash` will return a value that represent the name of the item. This value can be compared in code.
+
+This code uses string-based hashes to compare and control the behavior of a Sorter based on item present in its Import slot:
+
+```basic
+ALIAS Sorter Pin0
+Sorter.Mode = 2
+Start:
+VAR item = Sorter[Import].OccupantHash
+IF item != 0 THEN
+    Sorter.Output = (item != "ItemCoalOre") # Once compiled, "ItemCoalOre" value is 1724793494
+ENDIF
+GOTO Start
+```
+
+In this code we continuously checks the `OccupantHash` variable of the `Sorter` device.
+If the `OccupantHash` value is not equal to 0 (indicating that there's an item in the Import slot), it compares the `OccupantHash` value with the hash of "ItemCoalOre" (which is represented as a string enclosed in double quotes).
+If the `OccupantHash` value matches "ItemCoalOre," it sets the `Sorter.Output` variable to `0`, indicating that the Sorter should output the coal ore on the Output 0. Any other item will be sent to the Output 1.
+
+## Arrays of values
+
+To store data in an array in the BASIC programming language, you can use the square brackets `[]` to access specific elements of the array and assign values to them. Here's a basic example of storing data in an array:
+
+```basic
+ARRAY myArray[5]  # Create an array with 5 elements
+
+# Store values in the array
+myArray[0] = 10
+myArray[1] = 20
+myArray[2] = 30
+myArray[3] = 40
+myArray[4] = 50
+```
+
+To read data from an array, you can also use square brackets to access the elements and retrieve their values. Here's how to read data from the array:
+
+```basic
+VAR value = myArray[2]  # Retrieves the value 30 from myArray[2]
+```
+
+In this example, `myArray[2]` is used to access the third element of the array, which contains the value 30. You can use similar syntax to store and retrieve data from arrays in your code.
+
+Arrays can be usefull to store a list of values or Hash:
+
+```basic
+ARRAY hashArray[5]  # Create an array to store hashes
+
+# Store strings as hashes in the array
+hashArray[0] = "Item1"
+hashArray[1] = "Item2"
+hashArray[2] = "Item3"
+hashArray[3] = "Item4"
+hashArray[4] = "Item5"
+
+# Access and use the stored hashes
+VAR item
+item = hashArray[0]  # item now contains the hash of "Item1"
+item = hashArray[2]  # item now contains the hash of "Item3"
+```
+
+In this example, we create an array `hashArray` to store hashes. We then assign strings enclosed in double quotes to the array elements. These strings are automatically converted to hashes. Later in the code, you can access and use these hashes for various purposes, such as referencing items in the array.
+
+# Built-in constants
+
+## Colors
+
+In the BASIC programming language, you can specify colors using predefined constants. Here are the available color constants and an example of setting the "Color" variable of a Light device:
+
+Color Constants:
+- `Blue = 0`
+- `Grey = 1`
+- `Green = 2`
+- `Orange = 3`
+- `Red = 4`
+- `Yellow = 5`
+- `White = 6`
+- `Black = 7`
+- `Brown = 8`
+- `Khaki / Kaki = 9`
+- `Pink = 10`
+- `Purple = 11`
+
+Example of setting the "Color" variable of a Light device to "Green" (Color constant 2):
+
+```basic
+Light.Color = Green
+```
+
+In this example, the `Light` device's "Color" variable is set to the predefined constant `Green`, which corresponds to the color green. This syntax allows you to easily set the color of the device without having to remember the corresponding values.
 
 # Calculations
 
@@ -289,7 +421,7 @@ Here's an example of a `WHILE...ENDWHILE` loop:
 ```basic
 ALIAS Sensor Pin0
 ALIAS RedLight Pin1
-WHILE Sensor.Pressure > 50MPa THEN
+WHILE Sensor.Pressure > 50MPa
    # This code will execute as long as the pressure is above 50MPa
    WAIT(1) # Wait for 1 second
    RedLight.On = NOT(RedLight.On) # Blink the reg light
