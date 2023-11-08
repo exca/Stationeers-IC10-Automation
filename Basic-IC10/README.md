@@ -27,9 +27,9 @@ Here are some of the key features of this program:
 
 - **Device Addressing:** Easily switch between device addressing methods, whether it's through aliases, batch, or named devices, by changing just one line of code. This feature enhances code adaptability and simplifies device management.
 
-![Screenshot of the software](https://github.com/exca/Stationeers-BASIC-IC10/blob/main/Assets/Documentation/screenshot.png)
+![Screenshot of the software](screenshot.png)
 
 # Where to start?
 
-- [Quick Start Guide](https://github.com/exca/Stationeers-BASIC-IC10/blob/main/Guide/Quick%20Start.md)
-- [Basic Language Reference](https://github.com/exca/Stationeers-BASIC-IC10/blob/main/Guide/Basic%20Language%20Reference.md)
+- [Quick Start Guide](Quick%20Start.md)
+- [Basic Language Reference](Basic%20Language%20Reference.md)
