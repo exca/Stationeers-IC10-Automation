@@ -16,8 +16,8 @@ Getting started with our BASIC IC10 Compiler for Stationeers is quick and straig
    - Type your BASIC code directly within the application. Alternatively, you can write your code in your favorite text editor and then paste it into the application.
    - Select the generated IC 10 MIPS code, copy it, and then paste it directly into the game to implement your code.
 
-![image](https://github.com/exca/Stationeers-BASIC-IC10/assets/1387904/4422b4db-80d9-403d-9dea-fd2a624af638)
+![Screenshot of the software](screenshot.png)
 
 # Language Documentation
 
-For a comprehensive understanding of the BASIC programming language and its capabilities, be sure to check out our full documentation here: [Online documentation](https://github.com/exca/Stationeers-BASIC-IC10/blob/main/README.md)
+For a comprehensive understanding of the BASIC programming language and its capabilities, be sure to check out our full documentation here: [Online documentation](Basic%20Language%20Reference.md)
