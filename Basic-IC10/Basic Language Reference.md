@@ -103,7 +103,7 @@ Slots in the BASIC programming language can be specified using either a variable
 
 ### Read a reagent quantity
 
-In the BASIC programming language, you can read a reagent on a device using a specific syntax. To read a reagent, you need to specify the "Reagent" variable, followed by the reagent name or reagent hash within square brackets. Here's how to do it:
+In the BASIC programming language, you can read a reagent on a device using a specific syntax. To read a reagent, you need to specify the `Reagent` variable, followed by the reagent name or reagent hash within square brackets. Here's how to do it:
 
 ```basic
 Device.Reagent[ReagentName].ReagentProperty
@@ -113,13 +113,13 @@ Device.Reagent[ReagentName].ReagentProperty
 - `ReagentName`: You specify the name of the reagent you want to access within square brackets.
 - `ReagentProperty`: This is the specific property or data you want to retrieve from the reagent.
 
-Here's an example of how to read the `Contents` property of an "Iron" reagent on a device named `MyDevice`:
+Here's an example of how to read the `Contents` property of an `Iron` reagent on a device named `MyDevice`:
 
 ```basic
 MyDevice.Reagent[Iron].Contents
 ```
 
-In this example, `MyDevice` represents the device, `[Iron]` specifies the reagent name as "Iron," and `.Contents` retrieves the value of the Contents property for the Iron reagent.
+In this example, `MyDevice` represents the device, `[Iron]` specifies the reagent name as `Iron` and `.Contents` retrieves the value of the Contents property for the Iron reagent.
 
 You can use similar syntax to read other reagent properties or access different reagents on devices as needed within your program.
 
@@ -164,7 +164,7 @@ You can use this syntax to read specific properties or variables within batch de
 
 There are two main types of values in our BASIC programming language:
 
-1. **Boolean Values:** These are used to represent binary states, where `true` stands for "on" or "1," and `false` represents "off" or "0".
+1. **Boolean Values:** These are used to represent binary states, where `true` stands for `on` or `1`, and `false` represents `off` or `0`.
 
 For example, to switch a light on, you would assign `true` to a variable or device variable:
 
@@ -274,7 +274,7 @@ In this example, we create an array `hashArray` to store hashes. We then assign 
 
 ## Colors
 
-In the BASIC programming language, you can specify colors using predefined constants. Here are the available color constants and an example of setting the "Color" variable of a Light device:
+In the BASIC programming language, you can specify colors using predefined constants. Here are the available color constants and an example of setting the `Color` variable of a Light device:
 
 Color Constants:
 - `Blue = 0`
@@ -290,13 +290,13 @@ Color Constants:
 - `Pink = 10`
 - `Purple = 11`
 
-Example of setting the "Color" variable of a Light device to "Green" (Color constant 2):
+Example of setting the `Color` variable of a Light device to `Green` (Color constant 2):
 
 ```basic
 Light.Color = Green
 ```
 
-In this example, the `Light` device's "Color" variable is set to the predefined constant `Green`, which corresponds to the color green. This syntax allows you to easily set the color of the device without having to remember the corresponding values.
+In this example, the `Light` device's `Color` variable is set to the predefined constant `Green`, which corresponds to the color green. This syntax allows you to easily set the color of the device without having to remember the corresponding values.
 
 # Calculations
 
@@ -533,6 +533,32 @@ In the BASIC programming language, there are several built-in functions, includi
      VAR inverted = not(true)  # inverted will be false
      ```
 
+4. **min(value1, value2):**
+   - The `min()` command is used to retrieve the smallest value between two inputs. It compares `value1` and `value2` and returns the lesser of the two.
+   - Example:
+
+     ```basic
+     VAR smallestValue = min(15, 20)  # smallestValue will be 15
+     ```
+
+5. **max(value1, value2):**
+   - The `max()` command is utilized to obtain the largest value between two inputs. It evaluates `value1` and `value2`, returning the greater of the two.
+   - Example:
+
+     ```basic
+     VAR largestValue = max(35, 50)  # largestValue will be 50
+     ```
+
+6. **iif(condition, valueIfTrue, valueIfFalse):**
+   - The `iif()` command, also known as the Immediate If or Ternary Operator, evaluates a condition and returns one of two values based on the condition's result. If condition is true, it returns `valueIfTrue`; if false, it returns `valueIfFalse`.
+   - Example:
+
+     ```basic
+     VAR result = iif(x > 10, a, 12)
+     ```
+
+     In this example, if the condition `x > 10` is true, the `result` variable will be assigned the value of `a`; otherwise, it will be assigned the value `12`.
+
 Note: In the examples, values can be replaced by variables, constants, device variables, etc.
 
 It's worth noting that there are more functions and operations to be developed in the BASIC programming language to further enhance its capabilities. As the language evolves, additional functions and features may become available.
@@ -589,7 +615,7 @@ ENDFUNCTION
 Once you've defined a custom function, you can call it elsewhere in your code by using the function name and passing arguments to it. For example:
 
 ```basic
-VAR sum = addNumbers(3, 5)  # Calls the custom function and assigns the result to "sum"
+VAR sum = addNumbers(3, 5)  # Calls the custom function `addNumbers` and assigns the result to the newly declared variable `sum`
 ```
 
 Note that custom functions cannot be called in other custom functions (We have removed this possibility on purpose, as it require more stack operations while compiled).
