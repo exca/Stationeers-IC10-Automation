@@ -33,6 +33,9 @@ A variable declared by VAR is used to store and manipulate data, while a variabl
    - *Example:* `ALIAS MySensor Pin0`
 
 The Pin number must be specified between 0 and 5.
+To create an alias to the IC housing, the keyword "IC" of "THIS" can be used instead of "Pin0".
+
+Note: For a better adaptability to the language, an alias can also be declared using the MIPS model "db", "d0", "d1", etc. instead of "Pin0".
 
 ## More declaration types
 
@@ -54,6 +57,10 @@ In some situations, users may opt to declare multiple values in an array when de
 
 Declaring a device using NAME is a method to manage more than six devices within the constraints of an IC, which typically offers only six available pins, by associating specific devices with their names or types, thereby allowing for the effective management of a larger number of devices in the program.
 
+## Note about case sensitivity
+In many programing languages, the declared variables are case sensitive. For example: "MyVariable" will not be the same as "myVariable". When writing an incorrect variables name, the compiler may return an error.
+All the functions of this document are case insensitive, it means that a declaration of a variable can be written using "VAR" or "Var" or "var", etc.
+All the name of the devices and variables from the Stationpedia must be copied using the same case, as well as the strings when naming a device. It means that "StructureGasSensor" is not the same as "structuregassensor" and this second will probably not work in game.
 
 # Read and Write
 
@@ -76,6 +83,9 @@ MyPump.Setting = 5
 ```
 
 In the example above, `MyPump` represents the device, and `Setting` is the specific variable within that device that is being set to the value 5.
+
+**Important note about case sensitive variables:** In the MIPS program, the variables of the devices must respect the case as informed in the Stationpedia.
+The compiler will try to automatically adjust the case when a variable is recognized, but as the game is evolving, some new variables might not be recognized by the compiler and will not be corrected.
 
 ### Read a slot
 
