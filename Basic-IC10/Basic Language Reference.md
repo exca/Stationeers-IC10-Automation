@@ -558,8 +558,12 @@ In the BASIC programming language, there are several built-in functions, includi
      ```basic
      VAR largestValue = max(35, 50)  # largestValue will be 50
      ```
+6. **Native MIPS functions**
+   - Many additional functions native to the MIPS implementation of Stationeers can be used in the compilator:
+   - `acos(value)`, `asin(value)`, `atan(value)`, `ceil(value)`, `cos(value)`, `exp(value)`, `floor(value)`, `log(value)`, `mod(value, value)`, `rand()`, `sin(value)`, `sqrt(value)`, `tan(value)`, `trunc(value)`, `nor(value, value)`, `xor(value, value)`, `sap(value, value, value)`, `sna(value, value, value)`
+   - Each one of these instruction can be checked in-game using the programming console, or on-line on the [Stationeering MIPS simulator page](https://stationeering.com/tools/ic).
 
-6. **iif(condition, valueIfTrue, valueIfFalse):**
+7. **iif(condition, valueIfTrue, valueIfFalse):**
    - The `iif()` command, also known as the Immediate If or Ternary Operator, evaluates a condition and returns one of two values based on the condition's result. If condition is true, it returns `valueIfTrue`; if false, it returns `valueIfFalse`.
    - Example:
 
