@@ -318,7 +318,11 @@ In this example, the `Light` device's `Color` variable is set to the predefined 
    - `-` (Subtraction): Subtracts the right value from the left value.
    - `+` (Addition): Adds the values on both sides.
 
-2. **Boolean Operators:**
+2. **Increment and Decrement Operators**
+   - `i++` (Increment): Increases the value of the variable `i` by 1.
+   - `i--` (Decrement): Decreases the value of the variable `i` by 1.
+
+3. **Boolean Operators:**
    - `||` (Logical OR): Returns true if either side is true.
    - `&&` (Logical AND): Returns true if both sides are true.
 
@@ -416,6 +420,8 @@ Coolers.On = (Sensor.Temperature >= 30C)
 
 ## Loops structures
 
+1. **WHILE...ENDWHILE:**
+
 In the BASIC programming language, the `WHILE...ENDWHILE` structure is used to create loops that repeatedly execute a block of code as long as a specified condition is true. Here's the structure:
 
 ```basic
@@ -441,6 +447,116 @@ ENDWHILE
 ```
 
 In this example, the `WHILE` loop checks if the `Pressure` read by the `Sensor` is higher than 50MPa. As long as the condition is true, it will switch on/off the red light every 1 second. The loop continues until `Pressure` is no longer higher than 50MPa, at which point it terminates.
+
+
+2. **FOR...TO...(STEP)...NEXT:**
+
+The `FOR` loop in the BASIC programming language is a powerful control flow statement that allows you to iteratively execute a block of code. The basic syntax for a `FOR` loop is as follows:
+
+```basic
+FOR variable = start TO end [STEP increment]
+    # Code to be executed in each iteration
+NEXT
+```
+
+- **`variable`:** The loop control variable whose value is modified in each iteration.
+- **`start`:** The initial value of the loop control variable.
+- **`end`:** The end value at which the loop stops iterating.
+- **`STEP increment` (Optional):** Specifies the increment value for the loop control variable. If not provided, the default increment is 1.
+
+Here's an example of a `FOR...TO...NEXT` loop:
+
+```basic
+FOR i = 1 TO 10
+    # Code to be executed in each iteration
+    wait(1)
+    display.Setting = i
+NEXT
+```
+
+In this example, the `FOR` loop iterates from 1 to 10, updating the `display.Setting` with the current value of `i` in each iteration.
+
+The `STEP` instruction allows you to define the increment value for the loop control variable. For example:
+
+```basic
+FOR i = 2 TO 10 STEP 2
+    # Code to be executed in each iteration
+    wait(1)
+    display.Setting = i
+NEXT
+```
+
+In this case, the loop increments `i` by 2 in each iteration, and the display will show the values `2`, `4`, `6`, `8`, `10`.
+
+The `FOR` loop is a versatile construct for handling repetitive tasks, and it can be customized to suit specific iteration requirements within your BASIC code.
+
+3. **FOREACH...IN...NEXT:**
+
+The `FOREACH...IN...NEXT` loop in the BASIC programming language provides a convenient way to iterate over elements in an array. This loop is specifically designed for use with arrays of values. The basic syntax for a `FOREACH` loop is as follows:
+
+```basic
+FOREACH loopVariable IN array
+    # Code to be executed in each iteration
+    NEXT
+```
+
+- **`loopVariable`:** The variable that represents the current element in the array during each iteration.
+- **`array`:** The array of values over which the loop iterates.
+
+Example:
+
+```basic
+ARRAY valuesArray[5]
+valuesArray[0] = "Item1"
+valuesArray[1] = "Item2"
+valuesArray[2] = "Item3"
+valuesArray[3] = "Item4"
+valuesArray[4] = "Item5"
+
+FOREACH oneValue IN valuesArray
+    YIELD()
+    display.Setting = oneValue
+NEXT
+```
+
+In this example, the `FOREACH` loop iterates over the `valuesArray` array. The `oneValue` variable represents each element of the array in each iteration. For each value inside the array, the `display.Setting = oneValue` command updates a display setting with the current array element.
+
+The `FOREACH` loop provides a clean and efficient way to work with arrays of values in your BASIC code, simplifying iteration tasks and enhancing code readability.
+
+4. **Loop control flow**
+
+In the BASIC programming language, the `BREAK` and `CONTINUE` commands can be employed in various types of loops, including `WHILE`, `FOR`, and `FOREACH`. These commands add flexibility to loop control flow:
+
+- **BREAK:**
+  - The `BREAK` command is utilized to exit a loop prematurely. When encountered within a loop, it immediately terminates the loop, and the program execution proceeds to the statement following the loop.
+  - Example:
+
+    ```basic
+    WHILE condition
+        # Code block
+        IF someCondition THEN
+            BREAK  # Exit the loop if a certain condition is met
+        ENDIF
+        # Additional code
+    ENDWHILE
+    ```
+
+- **CONTINUE:**
+  - The `CONTINUE` command is used to skip the remaining code within a loop for the current iteration and proceed to the next iteration.
+  - Example:
+
+    ```basic
+    FOR i = 1 TO 10
+        # Code block
+        IF i == 5 THEN
+            CONTINUE  # Skip the rest of the loop for i=5
+        ENDIF
+        # Additional code
+    NEXT
+    ```
+
+These commands provide control over loop execution based on specific conditions, allowing for more nuanced and efficient loop structures in your BASIC code.
+
 
 ## Jumps: Labels and Goto functions
 
@@ -558,6 +674,7 @@ In the BASIC programming language, there are several built-in functions, includi
      ```basic
      VAR largestValue = max(35, 50)  # largestValue will be 50
      ```
+
 6. **Native MIPS functions**
    - Many additional functions native to the MIPS implementation of Stationeers can be used in the compilator:
    - `acos(value)`, `asin(value)`, `atan(value)`, `ceil(value)`, `cos(value)`, `exp(value)`, `floor(value)`, `log(value)`, `mod(value, value)`, `rand()`, `sin(value)`, `sqrt(value)`, `tan(value)`, `trunc(value)`, `nor(value, value)`, `xor(value, value)`, `sap(value, value, value)`, `sna(value, value, value)`
