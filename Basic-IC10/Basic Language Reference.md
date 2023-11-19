@@ -91,7 +91,7 @@ The compiler will try to automatically adjust the case when a variable is recogn
 
 To read a slot on a device in the BASIC programming language, you need to specify the device and the slot you want to read. The syntax for reading a slot on a device is as follows:
 
-```
+```basic
 DeviceName[SlotType].SlotProperty
 ```
 
@@ -349,6 +349,7 @@ result = (2 + 3) * 4
 ```
 
 In this case, the addition within the parentheses is performed first, and then the result is multiplied by 4, yielding `result = 20`.
+Note that whenever it is possible, the compiler will process calculations using values and constants to reduce the compiled code. In the example above, the compiled code is `move r0 20`, so no excess operation is done.
 
 # Structures
 
@@ -425,7 +426,7 @@ Coolers.On = (Sensor.Temperature >= 30C)
 In the BASIC programming language, the `WHILE...ENDWHILE` structure is used to create loops that repeatedly execute a block of code as long as a specified condition is true. Here's the structure:
 
 ```basic
-WHILE condition THEN
+WHILE condition
     # Code to execute while the condition is true
 ENDWHILE
 ```
@@ -439,11 +440,17 @@ Here's an example of a `WHILE...ENDWHILE` loop:
 ```basic
 ALIAS Sensor Pin0
 ALIAS RedLight Pin1
+
+Start:
+yield()
+
 WHILE Sensor.Pressure > 50MPa
    # This code will execute as long as the pressure is above 50MPa
    WAIT(1) # Wait for 1 second
    RedLight.On = NOT(RedLight.On) # Blink the reg light
 ENDWHILE
+
+goto Start
 ```
 
 In this example, the `WHILE` loop checks if the `Pressure` read by the `Sensor` is higher than 50MPa. As long as the condition is true, it will switch on/off the red light every 1 second. The loop continues until `Pressure` is no longer higher than 50MPa, at which point it terminates.
@@ -497,7 +504,7 @@ The `FOREACH...IN...NEXT` loop in the BASIC programming language provides a conv
 ```basic
 FOREACH loopVariable IN array
     # Code to be executed in each iteration
-    NEXT
+NEXT
 ```
 
 - **`loopVariable`:** The variable that represents the current element in the array during each iteration.
@@ -751,6 +758,78 @@ VAR sum = addNumbers(3, 5)  # Calls the custom function `addNumbers` and assigns
 
 Note that custom functions cannot be called in other custom functions (We have removed this possibility on purpose, as it require more stack operations while compiled).
 Custom functions must be used for more complex operations that needs to be repeated in code. If you don't need to pass parameters to a function, or don't need a return value, prioritize the use of labels  with `goto` instructions.
+
+# Indirect addressing
+
+In the program, users can use indirect addressing to dynamically define the device that will be read or written.
+
+1. **IC.PIN[value]**
+
+   - Indirect addressing allows users to dynamically specify a device for reading or writing in the program.
+   - The format for indirect addressing is `IC.Pin[value]`, where "value" is a variable or a constant representing the pin number.
+   - Users can then specify the variable to read or write as usual, using `.Variable`.
+   - Example:
+
+    ```basic
+    VAR currentDevice = 3  # Can be changed dynamically
+    VAR settingValue = IC.Pin[currentDevice].Setting
+    ```
+
+    In this example, the `currentDevice` variable dynamically determines the pin number, enabling the indirect reading of a device's setting value using `IC.Pin[currentDevice].Setting`.
+
+2. **IC.Device[hash]**
+
+    - Batch addressing allows users to dynamically specify a device for reading or writing in the program.
+    - The format for batch addressing is `IC.Device[hash]`, where "hash" is a variable or a constant representing the device type.
+    - Users can then specify the variable to read or write as usual, using `.Variable`.
+    - Example:
+
+    ```basic
+    VAR sensorsHash = "StructureGasSensor"  # Can be changed dynamically
+    VAR averageTemperature = IC.Device[sensorsHash].Temperature.Average
+    ```
+
+    In this example, the `sensorsHash` variable dynamically determines the device hash, enabling the indirect reading of a device's average temperature using `IC.Device[sensorsHash].Temperature.Average`.
+
+3. **IC.Device[hash].Name["nameHash"]**
+
+    - Name addressing allows users to dynamically specify a device for reading or writing in the program based on the device's name.
+    - The format for name addressing is `IC.Device[hash].Name["nameHash"]`, where "hash" is a variable or a constant representing the device type, and "nameHash" is a variable or a constant representing the name of the device.
+    - Note that the Hash name must be put between `"` to form a string that can contains whitespaces.
+    - Users can then specify the variable to read or write as usual, using `.Variable`.
+    - Example:
+
+    ```basic
+    VAR sensorsHash = "StructureGasSensor"  # Can be changed dynamically
+    VAR deviceNameHash = "Room 123 Gas Sensor"  # Can be changed dynamically
+    VAR deviceSetting = IC.Device[sensorsHash].Name[deviceNameHash].Setting
+    ```
+
+    In this example, the `sensorsHash` variable dynamically determines the device hash, and the `deviceNameHash` variable dynamically determines the name hash. This enables the indirect reading of a specific device's setting using `IC.Device[sensorsHash].Name[deviceNameHash].Setting`.
+
+4. **.Slot[slotIndex].Variable**
+
+    - Indirect addressing allows users to dynamically specify a device and slot index for reading or writing in the program.
+    - The format for indirect addressing a slot index is `.Slot[slotIndex]`, where "slotIndex" is a variable or a constant representing the slot index.
+    - Users can then specify the variable to read or write as usual, using `.Variable`.
+    - Example:
+
+    ```basic
+    VAR pinVendingMachine = 1  # Can be changed dynamically
+    VAR slotIndex = 2  # Can be changed dynamically
+    VAR slotOccupantHash = IC.Pin[pinVendingMachine].Slot[slotIndex].OccupantHash
+    ```
+
+    In this example, the `pinVendingMachine` variable dynamically determines pin of the device on the IC, and the `slotIndex` variable dynamically determines the slot index. This enables the indirect reading of a specific device's slot OccupantHash using `IC.Pin[pinVendingMachine].Slot[slotIndex].OccupantHash`.
+
+    Note that the `.Slot[slotIndex]` format can also be used in direct addressing as `vendingMachine.Slot[slotIndex]` instead of `vendingMachine[slotIndex]` for more clarity in code.
+
+5. **.Reagent[reagentHash].Property**
+
+    - Indirect addressing allows users to dynamically specify a device and reagent for reading in the program.
+    - The format for indirect addressing a slot index is `.Reagent[reagentHash].Property`, where "reagentHash" is a variable or a constant representing the reagent.
+
+    Note that this format is the same as in direct addressing.
 
 # Contacts and suggestions
 
