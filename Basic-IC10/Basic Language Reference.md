@@ -280,9 +280,11 @@ item = hashArray[2]  # item now contains the hash of "Item3"
 
 In this example, we create an array `hashArray` to store hashes. We then assign strings enclosed in double quotes to the array elements. These strings are automatically converted to hashes. Later in the code, you can access and use these hashes for various purposes, such as referencing items in the array.
 
-# Built-in constants
+# Constants
 
-## Colors
+## Built-in constants
+
+### Colors
 
 In the BASIC programming language, you can specify colors using predefined constants. Here are the available color constants and an example of setting the `Color` variable of a Light device:
 
@@ -307,6 +309,30 @@ Light.Color = Green
 ```
 
 In this example, the `Light` device's `Color` variable is set to the predefined constant `Green`, which corresponds to the color green. This syntax allows you to easily set the color of the device without having to remember the corresponding values.
+
+## Protected Constants **@constName**
+
+    - Constants in BASIC are typically replaced by their values during compilation. However, users can protect a constant by prefixing its name with "@".
+    - Constants protected with "@" are not replaced by the compiler but are kept as `define` statements in the compiled code.
+    - This allows users to change the constant's value without recompiling the entire code.
+    - Example:
+
+    ```basic
+    const @id = 0
+    IC.Setting = @id
+    ```
+
+    After compilation, this code will result in:
+
+    ```assembly
+    define id 0      # The constant value can be updated for each machine with different IDs
+    s db Setting id  # The constant is not replaced in the code
+    ```
+
+    In this example, the constant `id` is protected with "@" and is kept as a `define` statement in the compiled code. Users can modify the constant's value without recompiling the code.
+
+    Note: When the constant is protected, the compiler cannot optimize operations that generate constant values and will use additional lines in the compiled code.
+
 
 # Calculations
 
@@ -697,7 +723,23 @@ In the BASIC programming language, there are several built-in functions, includi
 
      In this example, if the condition `x > 10` is true, the `result` variable will be assigned the value of `a`; otherwise, it will be assigned the value `12`.
 
-Note: In the examples, values can be replaced by variables, constants, device variables, etc.
+8. **inRange(testedValue, goal, delta)**
+   - The `inRange()` function checks if a `testedValue` falls within a specified range around a `Goal` value.
+   - It returns `true` if `testedValue` is within the range from `goal - delta` to `goal + delta`, and `false` otherwise.
+   - Example:
+
+     ```basic
+     VAR temperature = 25.0 C
+     CONST targetTemperature = 23 C
+     CONST delta = 2.5 
+     VAR isTemperatureInRange = InRange(temperature, targetTemperature, delta)
+     ```
+
+     In this example, `isTemperatureInRange` will be `true` because the `temperature` falls within the range from `23.0 C - 2.5` (= `20.5 C`) to `23.0 C + 2.5` (= `25.5 C`).
+     
+     Note that the considered range limits are aproximated, because the compiled code uses the MIPS `sap` function, that takes a % delta that depends on the 2 compared values.
+
+Note: In all the examples, values can be replaced by variables, constants, device variables, etc.
 
 It's worth noting that there are more functions and operations to be developed in the BASIC programming language to further enhance its capabilities. As the language evolves, additional functions and features may become available.
 
