@@ -40,6 +40,7 @@ Getting started with our BASIC IC10 Compiler for Stationeers is quick and straig
     ```
     
     [More about Values assignation](Basic%20Language%20Reference.md#set-a-value)
+
     [More about Units like C, MPa, %, etc.](Basic%20Language%20Reference.md#units)
 
 
@@ -70,6 +71,7 @@ Getting started with our BASIC IC10 Compiler for Stationeers is quick and straig
     ```
 
     [More about Constant values](Basic%20Language%20Reference.md#constants)
+    
     [More about Comparisions and other Calculations](Basic%20Language%20Reference.md#calculations)
 
 
