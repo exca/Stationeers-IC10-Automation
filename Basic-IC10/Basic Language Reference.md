@@ -638,22 +638,22 @@ The `GOSUB` command in BASIC is used for creating sub-routines or functions with
 
 Here's an example to illustrate the use of `GOSUB`:
 
-    ```basic
-    Start:
-    yield()
-    VAR temperature = Sensor.Temperature
-    GOSUB regulateTemperature
-    GOSUB monitorTemperature
-    GOTO Start
+```basic
+Start:
+yield()
+VAR temperature = Sensor.Temperature
+GOSUB regulateTemperature
+GOSUB monitorTemperature
+GOTO Start
 
-    regulateTemperature:
-    Heater.On = (temperature < temperatureGoal)
-    RETURN
+regulateTemperature:
+Heater.On = (temperature < temperatureGoal)
+RETURN
 
-    monitorTemperature:
-    Display.Setting = temperature - 0 C  # Convert Kelvin to Celsius
-    RETURN
-    ```
+monitorTemperature:
+Display.Setting = temperature - 0 C  # Convert Kelvin to Celsius
+RETURN
+```
 
 In this example, the program starts at the `Start` label, yields, reads the temperature, and then calls two sub-routines using `GOSUB`. The `regulateTemperature` sub-routine checks and sets the heater based on the temperature, and the `monitorTemperature` sub-routine updates the display. The program then returns to the line after the respective `GOSUB` statement, and the loop continues. This allows for a structured and modular organization of code.
 
@@ -662,43 +662,43 @@ In this example, the program starts at the `Start` label, yields, reads the temp
 The `GOSUB` function can be used within a sub-routine, allowing for a hierarchical structure in the program.
 Here's an example to illustrate the use of nested `GOSUB`:
 
-    ```basic
-    alias Sensor Pin0
-    alias Display Pin1
-    alias Heater Pin2
-    alias Cooler Pin3
+```basic
+alias Sensor Pin0
+alias Display Pin1
+alias Heater Pin2
+alias Cooler Pin3
 
-    const temperatureGoal = 20 C
+const temperatureGoal = 20 C
 
-    Start:
-    yield()
-    VAR temperature = Sensor.Temperature
-    GOSUB regulateTemperature
-    GOSUB monitorTemperature
-    GOTO Start
+Start:
+yield()
+VAR temperature = Sensor.Temperature
+GOSUB regulateTemperature
+GOSUB monitorTemperature
+GOTO Start
 
-    regulateTemperature:
-    IF temperature < temperatureGoal THEN
-        GOSUB heaterCommand
-    ELSE
-        GOSUB coolerCommand
-    ENDIF
-    RETURN
+regulateTemperature:
+IF temperature < temperatureGoal THEN
+    GOSUB heaterCommand
+ELSE
+    GOSUB coolerCommand
+ENDIF
+RETURN
 
-    monitorTemperature:
-    Display.Setting = temperature - 0 C  # Convert Kelvin to Celsius
-    RETURN
+monitorTemperature:
+Display.Setting = temperature - 0 C  # Convert Kelvin to Celsius
+RETURN
 
-    heaterCommand:
-    Heater.On = true
-    Cooler.On = false
-    RETURN
+heaterCommand:
+Heater.On = true
+Cooler.On = false
+RETURN
 
-    coolerCommand:
-    Heater.On = false
-    Cooler.On = true
-    RETURN
-    ```
+coolerCommand:
+Heater.On = false
+Cooler.On = true
+RETURN
+```
 
 In this example, the `regulateTemperature` sub-routine is calling `heaterCommand` or `coolerCommand` sub-routines according to the current temperature.
 
