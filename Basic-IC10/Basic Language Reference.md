@@ -632,6 +632,157 @@ In this example, the label `startLoop` is defined before the loop begins. The pr
 
 Labels and `GOTO` can be helpful for controlling program flow in certain situations, but they should be used judiciously to maintain code readability and avoid unnecessary complexity.
 
+## Sub-routines calls with Gosub function
+
+The `GOSUB` command in BASIC is used for creating sub-routines or functions within your program. Unlike `GOTO`, which unconditionally jumps to a specific line, `GOSUB` allows the program to continue on the line after the `GOSUB` statement when the sub-routine reaches a `RETURN` command.
+
+Here's an example to illustrate the use of `GOSUB`:
+
+    ```basic
+    Start:
+    yield()
+    VAR temperature = Sensor.Temperature
+    GOSUB regulateTemperature
+    GOSUB monitorTemperature
+    GOTO Start
+
+    regulateTemperature:
+    Heater.On = (temperature < temperatureGoal)
+    RETURN
+
+    monitorTemperature:
+    Display.Setting = temperature - 0 C  # Convert Kelvin to Celsius
+    RETURN
+    ```
+
+In this example, the program starts at the `Start` label, yields, reads the temperature, and then calls two sub-routines using `GOSUB`. The `regulateTemperature` sub-routine checks and sets the heater based on the temperature, and the `monitorTemperature` sub-routine updates the display. The program then returns to the line after the respective `GOSUB` statement, and the loop continues. This allows for a structured and modular organization of code.
+
+### Nested Gosub
+
+The `GOSUB` function can be used within a sub-routine, allowing for a hierarchical structure in the program.
+Here's an example to illustrate the use of nested `GOSUB`:
+
+    ```basic
+    alias Sensor Pin0
+    alias Display Pin1
+    alias Heater Pin2
+    alias Cooler Pin3
+
+    const temperatureGoal = 20 C
+
+    Start:
+    yield()
+    VAR temperature = Sensor.Temperature
+    GOSUB regulateTemperature
+    GOSUB monitorTemperature
+    GOTO Start
+
+    regulateTemperature:
+    IF temperature < temperatureGoal THEN
+        GOSUB heaterCommand
+    ELSE
+        GOSUB coolerCommand
+    ENDIF
+    RETURN
+
+    monitorTemperature:
+    Display.Setting = temperature - 0 C  # Convert Kelvin to Celsius
+    RETURN
+
+    heaterCommand:
+    Heater.On = true
+    Cooler.On = false
+    RETURN
+
+    coolerCommand:
+    Heater.On = false
+    Cooler.On = true
+    RETURN
+    ```
+
+In this example, the `regulateTemperature` sub-routine is calling `heaterCommand` or `coolerCommand` sub-routines according to the current temperature.
+
+This structure provides a way to share common functionality across multiple sub-routines, promoting code reusability and maintainability.
+
+Note: Each call to a sub-routine adds approximately 7 lines of compiled code, as it involves storing the return line (`ra`) to the stack. Currently, sub-routines can only be called directly from the main program, not from within custom functions, though custom functions themselves have the ability to call sub-routines.
+
+## Which structure should I use?
+
+Choosing Between Labels and GOTO, Sub-Routines and GOSUB, and Custom Functions may not be easy. The goal of the following examples is to guide users in selecting the most appropriate structure for their programs.
+
+### Labels and GOTO:
+
+Use **labels and GOTO** when you want to create a linear code structure with branching based on conditions. This approach is suitable for the main loop of the program where the execution follows a predictable sequence of steps. Labels and GOTO are effective for simpler programs where control flow is straightforward and doesn't involve complex nesting.
+
+Example:
+```basic
+Start:
+  yield()
+  IF condition THEN GOTO BranchA
+  GOTO BranchB
+
+BranchA:
+  # Code for Branch A
+  GOTO End
+
+BranchB:
+  # Code for Branch B
+
+End:
+  # End of the loop
+  GOTO Start
+```
+
+### Sub-Routines and GOSUB:
+
+Opt for **sub-routines and GOSUB** when you need to implement nested code, state-machines, or reuse a common part of the code at multiple places without the necessity to return a value. This approach promotes modularity and code reuse, making it easier to manage and understand more complex programs.
+
+Example:
+```basic
+Start:
+  yield()
+  GOSUB ProcessTemperature
+  GOSUB DisplayStatus
+  GOTO Start
+
+ProcessTemperature:
+  # Code to process temperature
+  RETURN
+
+DisplayStatus:
+  # Code to display status
+  RETURN
+```
+
+### Custom Functions:
+
+Choose **custom functions** when dealing with complex calculations that are repeated at many places in the program and when you need to return a value. Additionally, custom functions are useful for managing many devices using indirect addressing, providing a concise way to encapsulate functionality and improve code readability.
+
+Example:
+```basic
+VAR result = CustomFunction(parameter1, parameter2)
+# ...
+
+FUNCTION CustomFunction(param1, param2)
+  # Complex calculations using parameters
+  VAR result = param1 * param2
+  RETURN result
+ENDFUNCTION
+```
+
+In summary, labels and GOTO are suitable for simple linear programs, sub-routines and GOSUB enhance modularity and code reuse, while custom functions handle complex calculations and promote readability in scenarios involving multiple devices. The choice depends on the specific requirements and structure of your program.
+
+| Criteria                    | Labels and GOTO                               | Sub-Routines and GOSUB                        | Custom Functions                             |
+|-----------------------------|-----------------------------------------------|---------------------------------------------|----------------------------------------------|
+| **Use Case**                | Linear code with branching, main program loop | Nested code, state-machines, code reused at multiple places | Complex calculations, repeated operations, indirect addressing many devices |
+| **Compiled Line Usage**    | 1 line for GOTO                               | Approximately 7 lines to store/restore `ra` | 4 lines per return + 2 per function variable |
+| **Return Value**           | No                                            | No                                          | 1 return value (optional)                   |
+| **Variables**              | Shared with the rest of the program           | Shared with the rest of the program         | Shared + Own variables (arguments)          |
+| **Can Be Used In**         | Main program only                             | Main program + in Sub-routines                  | Main program + in Sub-routines         |
+| **Recursivity**         | No, or Manual implementation                             | Yes automatically                  | No         |
+
+
+
 # Functions
 
 ## Yield and Wait
