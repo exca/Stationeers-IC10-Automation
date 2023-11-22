@@ -30,7 +30,9 @@ A variable declared by VAR is used to store and manipulate data, while a variabl
 
 3. **ALIAS**
    - *Explanation:* Assigns a name or alias to a Pin or device for easier reference.
-   - *Example:* `ALIAS MySensor Pin0`
+   - *Example:* `ALIAS MySensor d0`
+   - *Example 2:* `ALIAS MySensor = Pin0`
+   - *Example 3:* `ALIAS MySensor = IC.Pin[0]`
 
 The Pin number must be specified between 0 and 5.
 To create an alias to the IC housing, the keyword "IC" of "THIS" can be used instead of "Pin0".
@@ -45,17 +47,17 @@ In some situations, users may opt to declare multiple values in an array when de
    - *Explanation:* Declares arrays to store multiple values of the same type.
    - *Example:* `ARRAY sensorData[10]`
 
-5. **BATCH**
+5. **ALIAS for Batch read/write**
    - *Explanation:* Declares a device type using a hash or name for batch operations.
-   - *Example:* `BATCH MyDevices StructureArcFurnace` (with the name of the device found in Stationpedia)
-   - *Example 2:* `BATCH MyDevices -247344692` (with the Hash of the device found in Stationpedia)
+   - *Example:* `ALIAS MyDevices = IC.Device[StructureArcFurnace]` (with the name of the device found in Stationpedia)
+   - *Example 2:* `ALIAS MyDevices = IC.Device[-247344692]` (with the Hash of the device found in Stationpedia)
 
-6. **NAME**
+6. **ALIAS for Batch Name read/write**
    - *Explanation:* Associates a device with its name, using the hash or name of the device type.
-   - *Example:* `NAME MyDevice StructureGasSensor "Airlock Sensor"` (with the name of the device found in Stationpedia)
-   - *Example 2:* `NAME MyDevices -1252983604 "Airlock Sensor"` (with the Hash of the device found in Stationpedia)
+   - *Example:* `ALIAS MyDevice = IC.Device[StructureGasSensor].Name["Airlock Sensor"]` (with the name of the device found in Stationpedia)
+   - *Example 2:* `ALIAS MyDevices = IC.Device[-1252983604].Name["Airlock Sensor"]` (with the Hash of the device found in Stationpedia)
 
-Declaring a device using NAME is a method to manage more than six devices within the constraints of an IC, which typically offers only six available pins, by associating specific devices with their names or types, thereby allowing for the effective management of a larger number of devices in the program.
+Declaring a device using the `.Name[]` modifier the after `.Device[]` modifier allows to manage more than six devices within the constraints of an IC, which typically offers only six available pins, by associating specific devices with their names or types, thereby allowing for the effective management of a larger number of devices in the program.
 
 ## Note about case sensitivity
 In many programing languages, the declared variables are case sensitive. For example: "MyVariable" will not be the same as "myVariable". When writing an incorrect variables name, the compiler may return an error.
@@ -95,11 +97,11 @@ To read a slot on a device in the BASIC programming language, you need to specif
 DeviceName[SlotType].SlotProperty
 ```
 
-- `DeviceName`: This is the name of the device you want to read from.
+- `DeviceName`: This is the name of the device as declared by an Alias.
 - `SlotType`: Specify the type of slot you want to access, which can be `Import`, `Export`, or `Content`.
 - `SlotProperty`: This is the variable or data you want to retrieve from the slot.
 
-Here's an example of how to read the `OccupantHash` property from an `Import` slot of a device named `MySorter`:
+Here's an example of how to read the `OccupantHash` property from an `Import` slot of a alias declared `MySorter`:
 
 ```basic
 CurrentHashInSorter = MySorter[Import].OccupantHash
@@ -107,9 +109,13 @@ CurrentHashInSorter = MySorter[Import].OccupantHash
 
 In this example, `MySorter` represents the sorter, `[Import]` specifies the slot type as Import, and `.OccupantHash` retrieves the value of the OccupantHash property from the Import slot of the device, the the value is stored in the variable `CurrentHashInSorter`.
 
+Note that `MySorter` needs to be declared with the `ALIAS` command, and can be a declaration with a single `.Pin[]`, a `.Device[]`, or a `.Name[]` modifier, reading the slot will be done exactly the same way.
+
 You can use similar syntax for other slot types and properties on the device, depending on your specific needs within the game.
 
 Slots in the BASIC programming language can be specified using either a variable or a constant, and there are predefined constants for slot types, including `Import` (slot 0), `Export` (slot 1), and `Content` (slot 2). Check the Stationpedia to get the exact slot number to use.
+
+Rading a slot of a alias declared with a `.Device[]`, or a `.Name[]` modifier allows you to add a Batch Mode after the variable (check the "Specify batch reading mode" chapter of this guide).
 
 ### Read a reagent quantity
 
@@ -136,7 +142,7 @@ You can use similar syntax to read other reagent properties or access different 
 Here is a list of the `ReagentName` values that can be found in a printer: `Silicon`, `Iron`, `Gold`, `Copper`, `Silver`, `Lead`, `Steel`, `Electrum`, `Invar`, `Constantan`, `Solder`, `Astroloy`, `Hastelloy`, `Inconel`, `Waspaloy`, `Stellite`, `Nickel`.
 Using one of these names will automatically generate the Hash of the Ingot Item.
 
-The `ReagentName` can also be a variable (`VAR`) or a constant (`CONST`) value.
+The `ReagentName` can also be a variable (`VAR`), a constant (`CONST`) value, or even an alias (`ALIAS`) to another device's value.
 
 There are 3 different `ReagentProperty` values that can be used:
 - `Contents` to return the quantity of the specified reagent inside the printer.
@@ -147,26 +153,34 @@ If no `ReagentProperty` is specified, the default `Contents` will be considered.
 
 ### Specify batch reading mode
 
-When reading the value of a Batch or Name device in our BASIC programming language, you can specify the batch mode using the following syntax:
+When reading the value of a device using a `.Device[]` and/or a `.Name[]` modifier, you can specify the batch mode using the following syntax:
 
 ```
-DeviceType.Variable.BatchMode
+DeviceAlias.Variable.BatchMode
 ```
 
-- `DeviceType`: This is the name or hash of the device type.
+- `DeviceAlias`: This is the alias name declared for the device type.
 - `BatchMode`: Specify the batch mode, which can be `Average`, `Sum`, `Minimum`, or `Maximum`.
 - `Variable`: The specific variable or property you want to read within the batch device.
 
-Here's an example of how to read the `Temperature` variable in `Average` mode for a device type named `MyDevices`:
+Here's an example of how to read the `Temperature` variable in `Average` mode for a device declared with an alias `MyDevices`:
 
 ```basic
-RoomTemperature = MyDevices.Temperature.Average
+ALIAS MyGasSensors = IC.Device[StructureGasSensor]
+VAR RoomTemperature = MyGasSensors.Temperature.Average
 ```
 
-In this example, `MyDevices` represents the device type, `.Average` specifies the batch mode as Average, and `.Temperature` retrieves the value of the Temperature variable in Average mode.
+In this example, `MyGasSensors` is the name of the alias, `.Average` specifies the batch mode as Average, and `.Temperature` retrieves the value of the Temperature variable in Average mode.
 
 You can use this syntax to read specific properties or variables within batch devices, while selecting the appropriate batch mode for your desired calculations within the game.
 
+You can also simplify your code by declaring a specific alias with the variables and batch mode, so you don't have to type all the parameters.
+The same example as above can be written like that:
+
+```basic
+ALIAS MyGasSensorsTemperature = IC.Device[StructureGasSensor].Temperature.Average
+VAR RoomTemperature = MyGasSensorsTemperature
+```
 
 # Values
 
@@ -414,7 +428,7 @@ ALIAS Sensor Pin0
 VAR temperature = Sensor.Temperature
 
 # Declare muliple wall heaters by their Hash
-BATCH Heaters StructureWallHeater
+ALIAS Heaters = IC.Device[StructureWallHeater]
 
 IF temperature > 25C THEN
     # This code will execute if the temperature is greater than 25 degrees Celsius.
@@ -427,7 +441,7 @@ IF temperature <= 20C THEN
 ENDIF
 
 # Declare muliple wall coolers by their Hash
-BATCH Coolers StructureWallCooler
+ALIAS Coolers = IC.Device[StructureWallCooler]
 
 IF temperature >= 30C THEN
     # This code will execute if the temperature is 30 degrees Celsius or grater.

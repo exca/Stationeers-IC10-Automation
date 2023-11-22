@@ -48,7 +48,7 @@ Getting started with our BASIC IC10 Compiler for Stationeers is quick and straig
 
     To read the temperature from a gas sensor, use the `ALIAS` command to associate the sensor with a variable. For instance:
     ```basic
-    ALIAS gasSensor Pin0   # The sensor is set on Pin 0 of the IC housing
+    ALIAS gasSensor = IC.Pin[0]   # The sensor is set on Pin number 0 of the IC housing
     VAR temperature
     temperature = gasSensor.Temperature   # The 'Temperature' variable of the device is stored into the 'temperature' variable
     ```
@@ -62,8 +62,8 @@ Getting started with our BASIC IC10 Compiler for Stationeers is quick and straig
 
     Use the `CONST` command to define a constant value, and then use it in a comparision statement to control a wall heater. For example:
     ```basic
-    ALIAS gasSensor Pin0   # The sensor is set on Pin 0 of the IC housing
-    ALIAS wallHeater Pin1  # and the Wall Heater on Pin 1
+    ALIAS gasSensor = IC.Pin[0]   # The sensor is set on Pin 0 of the IC housing
+    ALIAS wallHeater = IC.Pin[1]  # and the Wall Heater on Pin 1
     
     CONST targetTemperature = 20 C  # The constant will be our goal temperature
 

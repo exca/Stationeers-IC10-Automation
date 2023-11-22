@@ -51,7 +51,7 @@ Commencer avec notre compilateur BASIC IC10 pour Stationeers est rapide et simpl
 
     Pour lire la température d'un capteur de gaz, utilisez la commande `ALIAS` pour associer le capteur à une variable. Par exemple :
     ```basic
-    ALIAS gasSensor Pin0   # Le capteur est placé sur l'entrée 0 de l'IC
+    ALIAS gasSensor = IC.Pin[0]   # Le capteur est placé sur l'entrée (Pin) numéro 0 de l'IC
     VAR temperature
     temperature = gasSensor.Temperature   # La variable 'Temperature' du dispositif est stockée dans la variable 'temperature'
     ```
@@ -65,8 +65,8 @@ Commencer avec notre compilateur BASIC IC10 pour Stationeers est rapide et simpl
 
     Utilisez la commande `CONST` pour définir une valeur constante, puis utilisez-la dans une instruction de comparaison pour contrôler un chauffage mural. Par exemple :
     ```basic
-    ALIAS gasSensor Pin0   # Le capteur est placé sur l'entrée 0 de l'IC
-    ALIAS wallHeater Pin1  # et le Chauffage Mural sur l'entrée 1
+    ALIAS gasSensor = IC.Pin[0]   # Le capteur est placé sur l'entrée 0 de l'IC
+    ALIAS wallHeater = IC.Pin[1]  # et le Chauffage Mural sur l'entrée 1
     
     CONST targetTemperature = 20 C  # La constante sera notre température cible
 
