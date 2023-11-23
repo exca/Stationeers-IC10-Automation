@@ -59,6 +59,13 @@ In some situations, users may opt to declare multiple values in an array when de
 
 Declaring a device using the `.Name[]` modifier the after `.Device[]` modifier allows to manage more than six devices within the constraints of an IC, which typically offers only six available pins, by associating specific devices with their names or types, thereby allowing for the effective management of a larger number of devices in the program.
 
+7. **ALIAS for Channel Read/Write**
+    - *Explanation:* Associates a device's communication channel using Port and Channel. A Channel can be used as a variable and is accessible to other devices sharing the same circuit. The Channel must be a number from 0 to 7, and the Port must be one of the device's ports where a power circuit is connected.
+    - *Example:* `ALIAS MyChannel = IC.Pin[0].Port[1].Channel[3]` (the available ports and descriptions of a device can be found in Stationpedia)
+    - *Example 2:* `ALIAS IC_Channel = IC.Port[0].Channel[1]`
+
+Note that the Port and Channel numbers must be integers or constant values, and they cannot be addressed dynamically using a variable.
+
 ## Note about case sensitivity
 In many programing languages, the declared variables are case sensitive. For example: "MyVariable" will not be the same as "myVariable". When writing an incorrect variables name, the compiler may return an error.
 All the functions of this document are case insensitive, it means that a declaration of a variable can be written using "VAR" or "Var" or "var", etc.
@@ -1037,6 +1044,10 @@ In the program, users can use indirect addressing to dynamically define the devi
     - The format for indirect addressing a slot index is `.Reagent[reagentHash].Property`, where "reagentHash" is a variable or a constant representing the reagent.
 
     Note that this format is the same as in direct addressing.
+
+7. **IC.PIN[pinNumber].Port[portNumber].Channel[channelNumber]**
+    
+    - Indirect addressing is not possible with channels. The `pinNumber`, `portNumber`, and `channelNumber` must be constant values. Channels cannot be addressed dynamically by the compiled IC code.
 
 # Contacts and suggestions
 
