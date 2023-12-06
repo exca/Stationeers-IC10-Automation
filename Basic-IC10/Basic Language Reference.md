@@ -333,26 +333,26 @@ In this example, the `Light` device's `Color` variable is set to the predefined 
 
 ## Protected Constants **@constName**
 
-    - Constants in BASIC are typically replaced by their values during compilation. However, users can protect a constant by prefixing its name with "@".
-    - Constants protected with "@" are not replaced by the compiler but are kept as `define` statements in the compiled code.
-    - This allows users to change the constant's value without recompiling the entire code.
-    - Example:
+- Constants in BASIC are typically replaced by their values during compilation. However, users can protect a constant by prefixing its name with "@".
+- Constants protected with "@" are not replaced by the compiler but are kept as `define` statements in the compiled code.
+- This allows users to change the constant's value without recompiling the entire code.
+- Example:
 
-    ```basic
-    const @id = 0
-    IC.Setting = @id
-    ```
+```basic
+const @id = 0
+IC.Setting = @id
+```
 
-    After compilation, this code will result in:
+After compilation, this code will result in:
 
-    ```assembly
-    define id 0      # The constant value can be updated for each machine with different IDs
-    s db Setting id  # The constant is not replaced in the code
-    ```
+```assembly
+define id 0      # The constant value can be updated for each machine with different IDs
+s db Setting id  # The constant is not replaced in the code
+```
 
-    In this example, the constant `id` is protected with "@" and is kept as a `define` statement in the compiled code. Users can modify the constant's value without recompiling the code.
+In this example, the constant `id` is protected with "@" and is kept as a `define` statement in the compiled code. Users can modify the constant's value without recompiling the code.
 
-    Note: When the constant is protected, the compiler cannot optimize operations that generate constant values and will use additional lines in the compiled code.
+Note: When the constant is protected, the compiler cannot optimize operations that generate constant values and will use additional lines in the compiled code.
 
 
 # Calculations
