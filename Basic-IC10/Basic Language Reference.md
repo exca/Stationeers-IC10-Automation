@@ -429,6 +429,24 @@ In the BASIC programming language, you can use conditional structures to control
      ```
    - The program checks the `condition`. If it's true, it executes the code within the first block (`THEN`); if the condition is false, it executes the code within the second block (`ELSE`).
 
+3. **...ELSEIF...:**
+   - The `ELSEIF` condition can be added before the `ELSE` instruction to check another condition. The `ELSIF` condition will be tested only if all the previous `IF` and `ELSEIF` condition were false.
+   - In a `IF...THEN...ELSE...ENDIF` structure, the `ELSEIF` condition can be added many times, following this structure:
+
+     ```basic
+     IF condition1 THEN
+         # Code to execute if the condition1 is true
+     ELSEIF condition2 THEN  # optional
+         # Code to execute if the condition1 is false but condition2 is true
+     ELSEIF condition3 THEN  # optional
+         # Code to execute if condition1 and condition2 are false but condition3 is true
+     ELSE
+         # Code to execute if all the previous condition are false
+     ENDIF
+     ```
+   - If more than one `ELSEIF` condition is true, only the first one will be executed.
+   - The `ELSEIF` instruction can be used even without an `ELSE` instruction, as in the following example.
+
 Here's an example of both structures in action:
 
 ```basic
@@ -439,13 +457,15 @@ VAR temperature = Sensor.Temperature
 ALIAS Heaters = IC.Device[StructureWallHeater]
 
 IF temperature > 25C THEN
+
     # This code will execute if the temperature is greater than 25 degrees Celsius.
     Heaters.On = false
-ENDIF
 
-IF temperature <= 20C THEN
+ELSEIF temperature <= 20C THEN
+
     # This code will execute if the temperature is 20 degrees Celsius or lower.
     Heaters.On = true
+
 ENDIF
 
 # Declare muliple wall coolers by their Hash
