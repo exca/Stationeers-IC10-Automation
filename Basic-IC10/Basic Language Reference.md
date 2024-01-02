@@ -905,6 +905,7 @@ In the BASIC programming language, there are several built-in functions, includi
    - Many additional functions native to the MIPS implementation of Stationeers can be used in the compilator:
    - `acos(value)`, `asin(value)`, `atan(value)`, `ceil(value)`, `cos(value)`, `exp(value)`, `floor(value)`, `log(value)`, `mod(value, value)`, `rand()`, `sin(value)`, `sqrt(value)`, `tan(value)`, `trunc(value)`, `nor(value, value)`, `xor(value, value)`, `sap(value, value, value)`, `sna(value, value, value)`, `snan(value)`
    - Each one of these instruction can be checked in-game using the programming console, or on-line on the [Stationeering MIPS simulator page](https://stationeering.com/tools/ic).
+   - It is possible to add more native MIPS functions by using a Meta declaration. This is detailled in the Metadata chapter.
 
 7. **iif(condition, valueIfTrue, valueIfFalse):**
    - The `iif()` command, also known as the Immediate If or Ternary Operator, evaluates a condition and returns one of two values based on the condition's result. If condition is true, it returns `valueIfTrue`; if false, it returns `valueIfFalse`.
@@ -1069,6 +1070,43 @@ In the program, users can use indirect addressing to dynamically define the devi
 7. **IC.PIN[pinNumber].Port[portNumber].Channel[channelNumber]**
     
     - Indirect addressing is not possible with channels. The `pinNumber`, `portNumber`, and `channelNumber` must be constant values. Channels cannot be addressed dynamically by the compiled IC code.
+
+# Metadata
+
+The Compiler provides options to modify its behavior through metadata declarations. While these settings are not essential for typical usage (default settings are optimized for regular use), they can offer additional control over line usage optimization. However, the primary factor for optimization remains the code structure itself.
+
+To declare metadata, use the following comment format:
+
+```basic
+##Meta: VariableName = VariableValue
+```
+
+Ensure strict adherence to this format and avoid adding any comments after the `VariableValue`.
+
+The `VariableName` and `VariableValue` are defined below:
+
+1. **Author = name**
+    
+    - Modifies the default author name displayed when saving the script file. The specified "name" will appear in the Library alongside the script.
+
+2. **ImmediateRegisters = 11**
+
+    - Sets the number of registers available directly for allocation by the Allocator. This value dictates the range from r0 to r10 by default.
+    - Adjusting this alongside `PaginatedRegisters` can impact the allocation strategy of IC registers.
+
+3. **PaginatedRegisters = 5**
+
+    - Determines the number of registers reserved temporarily by the Allocator for values stored in the stack. By default, this allocate r11 to r15, assuming `ImmediateRegisters` is set to 11.
+    - The Allocator autonomously decides whether to store specific variables in the stack or direct registers.
+
+4. **DeferredVariableLines = 10**
+
+    - Specifies the duration, in lines, for which the Allocator retains a value in a paginated register before storing it back to the stack between each uses.
+    - Increasing this value can minimize the lines required for reading or storing values in the stack, but it will also increase the need of paginated registers.
+
+## Caution with Metadata customization:
+
+While the Metadata options provide a level of customization for advanced users, they come with a cautionary note. Modifying these values without a thorough understanding of their implications can lead to unexpected behavior or suboptimal performance in the compiled code. For most users, the default settings are meticulously calibrated to offer a balance of efficiency and functionality. Therefore, it is generally advisable to proceed with caution and consider leaving the Metadata values at their default settings unless specific optimization needs arise.
 
 # Contacts and suggestions
 
