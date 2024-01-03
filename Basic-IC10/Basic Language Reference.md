@@ -1104,6 +1104,11 @@ The `VariableName` and `VariableValue` are defined below:
     - Specifies the duration, in lines, for which the Allocator retains a value in a paginated register before storing it back to the stack between each uses.
     - Increasing this value can minimize the lines required for reading or storing values in the stack, but it will also increase the need of paginated registers.
 
+5. **UseLegacyStack = false**
+
+    - Instruct the compiler to use the previous stack allocation commands `push` and `pop`, instead of the new stack commands `put` and `get`.
+    - The new command set available from the Stationeers "Rocket" update, allows to directly write at a spcific stack position without having to set the pointer `sp` first.
+
 ## Caution with Metadata customization:
 
 While the Metadata options provide a level of customization for advanced users, they come with a cautionary note. Modifying these values without a thorough understanding of their implications can lead to unexpected behavior or suboptimal performance in the compiled code. For most users, the default settings are meticulously calibrated to offer a balance of efficiency and functionality. Therefore, it is generally advisable to proceed with caution and consider leaving the Metadata values at their default settings unless specific optimization needs arise.
