@@ -885,6 +885,8 @@ In the BASIC programming language, there are several built-in functions, includi
      VAR inverted = not(true)  # inverted will be false
      ```
 
+   - Note: For disambiguation purposes, this function is not equivalent to the MIPS `not` function, which can be used to process a bitwise not operation. To use the bitwise not operation, you need to use the `bit_not(value)` function, as specified in the chapter on native MIPS bitwise functions.
+
 4. **min(value1, value2):**
    - The `min()` command is used to retrieve the smallest value between two inputs. It compares `value1` and `value2` and returns the lesser of the two.
    - Example:
@@ -901,13 +903,7 @@ In the BASIC programming language, there are several built-in functions, includi
      VAR largestValue = max(35, 50)  # largestValue will be 50
      ```
 
-6. **Native MIPS functions**
-   - Many additional functions native to the MIPS implementation of Stationeers can be used in the compilator:
-   - `acos(value)`, `asin(value)`, `atan(value)`, `ceil(value)`, `cos(value)`, `exp(value)`, `floor(value)`, `log(value)`, `mod(value, value)`, `rand()`, `sin(value)`, `sqrt(value)`, `tan(value)`, `trunc(value)`, `nor(value, value)`, `xor(value, value)`, `sap(value, value, value)`, `sna(value, value, value)`, `snan(value)`
-   - Each one of these instruction can be checked in-game using the programming console, or on-line on the [Stationeering MIPS simulator page](https://stationeering.com/tools/ic).
-   - It is possible to add more native MIPS functions by using a Meta declaration. This is detailled in the Metadata chapter.
-
-7. **iif(condition, valueIfTrue, valueIfFalse):**
+6. **iif(condition, valueIfTrue, valueIfFalse):**
    - The `iif()` command, also known as the Immediate If or Ternary Operator, evaluates a condition and returns one of two values based on the condition's result. If condition is true, it returns `valueIfTrue`; if false, it returns `valueIfFalse`.
    - Example:
 
@@ -917,7 +913,7 @@ In the BASIC programming language, there are several built-in functions, includi
 
      In this example, if the condition `x > 10` is true, the `result` variable will be assigned the value of `a`; otherwise, it will be assigned the value `12`.
 
-8. **inRange(testedValue, goal, delta)**
+7. **inRange(testedValue, goal, delta)**
    - The `inRange()` function checks if a `testedValue` falls within a specified range around a `Goal` value.
    - It returns `true` if `testedValue` is within the range from `goal - delta` to `goal + delta`, and `false` otherwise.
    - Example:
@@ -932,6 +928,22 @@ In the BASIC programming language, there are several built-in functions, includi
      In this example, `isTemperatureInRange` will be `true` because the `temperature` falls within the range from `23.0 C - 2.5` (= `20.5 C`) to `23.0 C + 2.5` (= `25.5 C`).
      
      Note that the considered range limits are aproximated, because the compiled code uses the MIPS `sap` function, that takes a % delta that depends on the 2 compared values.
+
+8. **Native MIPS functions**
+   - Many additional functions native to the MIPS implementation of Stationeers can be used in the compilator:
+   - `acos(value)`, `asin(value)`, `atan(value)`, `ceil(value)`, `cos(value)`, `exp(value)`, `floor(value)`, `log(value)`, `mod(value, value)`, `rand()`, `sin(value)`, `sqrt(value)`, `tan(value)`, `trunc(value)`, `nor(value, value)`, `xor(value, value)`, `sap(value, value, value)`, `sna(value, value, value)`, `snan(value)`.
+   - Each one of these instruction can be checked in-game using the programming console, or on-line on the [Stationeering MIPS simulator page](https://stationeering.com/tools/ic).
+   - It is possible to add more native MIPS functions by using a Meta declaration. This is detailled in the Metadata chapter.
+
+9. **Native MIPS bitwise functions**
+   - To ensure that bitwise functions are used when processing binary values, MIPS-specific compatible bitwise functions have been prefixed with `bit_`.
+   - The following bitwise operations are available int he compiler: `bit_not(value)`, `bit_and(value, value)`, `bit_or(value, value)`, `bit_xor(value, value)`, `bit_nor(value, value)`, `bit_sla(value, value)`, `bit_sll(value, value)`, `bit_sra(value, value)`, `bit_srl(value, value)`.
+   - For help with these functions, please consult the help available in the game's MIPS editor.
+
+10. **Other Native MIPS functions**
+    - It is possible to add more MIPS function, for example, if a new update is the game is adding a function not implemented yet in the compiler.
+    - This procedure is detailed in the Meta instruction chapter of this document.
+
 
 Note: In all the examples, values can be replaced by variables, constants, device variables, etc.
 
@@ -1104,10 +1116,17 @@ The `VariableName` and `VariableValue` are defined below:
     - Specifies the duration, in lines, for which the Allocator retains a value in a paginated register before storing it back to the stack between each uses.
     - Increasing this value can minimize the lines required for reading or storing values in the stack, but it will also increase the need of paginated registers.
 
-5. **UseLegacyStack = false**
+5. **UsePutGetStackCommands = false**
 
-    - Instruct the compiler to use the previous stack allocation commands `push` and `pop`, instead of the new stack commands `put` and `get`.
+    - Instruct the compiler to use the new stack allocation commands `put` and `get`, instead of the old ones `push` and `pop`.
     - The new command set available from the Stationeers "Rocket" update, allows to directly write at a spcific stack position without having to set the pointer `sp` first.
+    - Note that this optimization should be used only if the code is compiled for an IC, as these commands required a housing to access the Stack. To compile a code for an atmospheric device, for example, leave the default value to false.
+
+6. **AddMipsWrapper = add,2**
+
+    - Add a MIPS wrapper to use the provided function name (`add` in the example) with its specified number of arguments (2 in the example).
+    - Once added to the wrapper, the function will be automatically converted to mips, without any interpretation by the compiler.
+    - The wrapper can only be used with functions that retun a value.
 
 ## Caution with Metadata customization:
 
