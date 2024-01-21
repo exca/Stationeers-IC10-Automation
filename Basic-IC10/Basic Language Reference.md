@@ -929,18 +929,57 @@ In the BASIC programming language, there are several built-in functions, includi
      
      Note that the considered range limits are aproximated, because the compiled code uses the MIPS `sap` function, that takes a % delta that depends on the 2 compared values.
 
-8. **Native MIPS functions**
+8. **Lerp(t, x, y)**
+   - The `Lerp()` function performs linear interpolation between two values (`x` and `y`) based on a third parameter (`t`). The `t` parameter is clamped to the range [0,1], meaning if it's below 0, it's considered 0, and if it's above 1, it's considered 1. The result is a smooth transition between the values `x` and `y` based on the proportion specified by `t`.
+   - Example:
+
+     ```basic
+     VAR result = Lerp(0.5, 10, 20)
+     ```
+     In this example, `result` will be set to 15, which is the midpoint between 10 and 20.
+
+   - The `t` value can be outside of the range [0,1]. In this case, the `Lerp()` function will limit the output.
+
+   - Example 2:
+     ```basic
+     VAR result = Lerp(1.5, 10, 20)
+     ```
+     Since `t` is clamped to the range [0,1], when it exceeds 1, it's considered 1. Therefore, the calculation becomes equivalent to `Lerp(1, 10, 20)`.
+     The result will be 20 because `t = 1` represents the full distance between `x` and `y`, placing the result at the upper limit (`y`).
+
+9. **LerpUnclamped(t, x, y)**
+   - The `LerpUnclamped()` function also performs linear interpolation between two values (`x` and `y`) based on a third parameter (`t`). However, unlike `Lerp()`, the `t` parameter is not clamped to the range [0,1]. It allows for interpolation beyond this range, resulting in values outside the range of `x` to `y`.
+
+   - Example:
+     ```basic
+     VAR result = LerpUnclamped(1.5, 10, 20)
+     ```
+     In this example, `result` will be set to 25, which is the result of extrapolating beyond the range of `x` to `y`.
+
+   - Within the [0,1] range, `LerpUnclamped()` is behaving the same way as the `Lerp()` function.
+   - Note that `LerpUnclamped()` is more efficient than the `Lerp()` function once compiled in MIPS, as it uses less lines of code for not having to clamp the input value.
+
+10. **InverseLerp(v, a, b)**
+   - The `InverseLerp()` function is the inverse of the `Lerp()` function. It calculates the parameter `t` that produces a specified value (`v`) within the range of values `a` and `b`. It's particularly useful for determining where a given value lies within a linear interpolation.
+
+   - Example:
+     ```basic
+     VAR t = InverseLerp(15, 10, 20)
+     ```
+     In this example, `t` value will be set to 0.5, indicating that 15 is halfway between 10 and 20 in the linear interpolation.
+
+11. **Native MIPS functions**
    - Many additional functions native to the MIPS implementation of Stationeers can be used in the compilator:
    - `acos(value)`, `asin(value)`, `atan(value)`, `ceil(value)`, `cos(value)`, `exp(value)`, `floor(value)`, `log(value)`, `mod(value, value)`, `rand()`, `sin(value)`, `sqrt(value)`, `tan(value)`, `trunc(value)`, `nor(value, value)`, `xor(value, value)`, `sap(value, value, value)`, `sna(value, value, value)`, `snan(value)`.
    - Each one of these instruction can be checked in-game using the programming console, or on-line on the [Stationeering MIPS simulator page](https://stationeering.com/tools/ic).
    - It is possible to add more native MIPS functions by using a Meta declaration. This is detailled in the Metadata chapter.
 
-9. **Native MIPS bitwise functions**
+12. **Native MIPS bitwise functions**
    - To ensure that bitwise functions are used when processing binary values, MIPS-specific compatible bitwise functions have been prefixed with `bit_`.
    - The following bitwise operations are available int he compiler: `bit_not(value)`, `bit_and(value, value)`, `bit_or(value, value)`, `bit_xor(value, value)`, `bit_nor(value, value)`, `bit_sla(value, value)`, `bit_sll(value, value)`, `bit_sra(value, value)`, `bit_srl(value, value)`.
    - For help with these functions, please consult the help available in the game's MIPS editor.
 
-10. **Other Native MIPS functions**
+13. **Other Native MIPS functions**
     - It is possible to add more MIPS function, for example, if a new update is the game is adding a function not implemented yet in the compiler.
     - This procedure is detailed in the Meta instruction chapter of this document.
 
