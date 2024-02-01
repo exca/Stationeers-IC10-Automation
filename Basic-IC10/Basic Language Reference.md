@@ -59,13 +59,19 @@ In some situations, users may opt to declare multiple values in an array when de
 
     Declaring a device using the `.Name[]` modifier the after `.Device[]` modifier allows to manage more than six devices within the constraints of an IC, which typically offers only six available pins, by associating specific devices with their names or types, thereby allowing for the effective management of a larger number of devices in the program.
 
-7. **ALIAS for Channel Read/Write**
+7. **ALIAS for Channel read/write**
     - *Explanation:* Associates a device's communication channel using Port and Channel. A Channel can be used as a variable and is accessible to other devices sharing the same circuit. The Channel must be a number from 0 to 7, and the Port must be one of the device's ports where a power circuit is connected.
     - *Example:* `ALIAS MyChannel = IC.Pin[0].Port[1].Channel[3]` (the available ports and descriptions of a device can be found in Stationpedia)
     - *Example 2:* `ALIAS IC_Channel = IC.Port[0].Channel[1]`
 
     Note that the Port and Channel numbers must be integers or constant values, and they cannot be addressed dynamically using a variable.
     Also, note that a channel freshly initialized (after loading a saved game, or when using it for the first time) will have a special value of `NaN`. This special value cannot be compared directly (this is not possible in-game), therefore, the command `snan(value)` can be used to test the value.
+
+8. **ID for Device read/write using ReferenceID**
+    - *Explanation:* Declares a device with its Reference ID. This kind of alias can be used only for variables reading and writing, and isn't compatible with Slots or Reagents reading.
+    - *Example:* `ALIAS MyDevice = IC.ID[542443]` (the reference ID can be found using a Configuration card in a tablet)
+
+    Note that the Reference ID must be decimal, and not hexadecimal. The Configuration card in the tablet can list both variables. The value starting with `$` is Hexadecimal and cannot be using in the Basic IC compiler (not implemented yet) so only the Decimal value can be used. Usually the Decimal is the last in the variable list.
 
 ## Note about case sensitivity
 In many programing languages, the declared variables are case sensitive. For example: "MyVariable" will not be the same as "myVariable". When writing an incorrect variables name, the compiler may return an error.
