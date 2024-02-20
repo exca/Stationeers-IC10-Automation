@@ -1166,12 +1166,26 @@ The `VariableName` and `VariableValue` are defined below:
     - Instruct the compiler to use the new stack allocation commands `put` and `get`, instead of the old ones `push` and `pop`.
     - The new command set available from the Stationeers "Rocket" update, allows to directly write at a spcific stack position without having to set the pointer `sp` first.
     - Note that this optimization should be used only if the code is compiled for an IC, as these commands required a housing to access the Stack. To compile a code for an atmospheric device, for example, leave the default value to false.
+    - Usage: Copy-paste this line into your Basic script.
+        ```basic
+        ##Meta:UsePutGetStackCommands=true
+        ```
 
 6. **AddMipsWrapper = add,2**
 
     - Add a MIPS wrapper to use the provided function name (`add` in the example) with its specified number of arguments (2 in the example).
     - Once added to the wrapper, the function will be automatically converted to mips, without any interpretation by the compiler.
     - The wrapper can only be used with functions that retun a value.
+
+7. **Comment = ...**
+
+    - This command is adding a comment to the compiled code.
+    - According to the number of lines, some comments can be kept in the final code. When the compiler needs to limit the final code to 128 lines, it will remove non-critical code only (like devices aliases and comments).
+    - The Meta Comments are the last to be removed from the compiled code when removing non-critical lines.
+    - Example:
+        ```basic
+        ##Meta:Comment=Do not forget to set the Max Pressure below 60 MPa.
+        ```
 
 ## Caution with Metadata customization:
 
